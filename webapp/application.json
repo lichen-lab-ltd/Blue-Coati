@@ -1,0 +1,16 @@
+{
+  "appName": "Blue Coati",
+  "appShortName": "Blue Coati",
+  "appDescription": "Decentralised Application Based On A Template",
+  "appShortDescription": "Decentralised Application",
+  "developerName": "Nobody",
+  "developerURL": "https://blue-coati.eth.link",
+  "url": "https://blue-coati.eth.link",
+  "ensName": "blue-coati.eth",
+  "background": "#1f253a",
+  "theme_color": "#1f253a",
+  "appleStatusBarStyle": "black-translucent",
+  "display": "fullscreen",
+  "icon": "icon.svg",
+  "preview": "preview.png"
+}

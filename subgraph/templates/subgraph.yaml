@@ -1,0 +1,25 @@
+specVersion: 0.0.2
+description: Blue Coati
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: BlueCoati
+    network: mainnet
+    source:
+      address: '{{contracts.BlueCoati.address}}'
+      abi: BlueCoatiContract
+      startBlock: {{contracts.BlueCoati.receipt.blockNumber}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - NamedEntity
+      abis:
+        - name: BlueCoatiContract
+          file: ./abis/BlueCoati.json
+      eventHandlers:
+        - event: NameChanged(indexed address,string)
+          handler: handleNameChanged
+      file: ./src/mapping.ts
