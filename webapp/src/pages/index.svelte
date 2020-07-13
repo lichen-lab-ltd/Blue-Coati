@@ -1,18 +1,18 @@
 <script>
-  import names from '../stores/names';
-  names.listen();
+  import deposits from '../stores/deposits';
+  deposits.listen();
 
   import Link from '@curi/svelte/components/Link.svelte';
 </script>
 
-{#if !$names.status}
+{#if !$deposits.status}
 <div>Name not loaded</div>
-{:else if $names.status === 'Error'}
+{:else if $deposits.status === 'Error'}
 <div>Error</div>
-{:else if $names.status === 'Loading'}
-<div>Loading Names...</div>
-{:else} {#each $names.data as name, index}
-<li>{name.name}</li>
+{:else if $deposits.status === 'Loading'}
+<div>Loading deposits...</div>
+{:else} {#each $deposits.data as deposit, index}
+<li>{deposit.id}: {deposit.amount}</li>
 {/each} {/if}
 
 

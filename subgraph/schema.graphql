@@ -1,4 +1,4 @@
-type NamedEntity @entity {
+type UserDeposit @entity {
   id: ID!
-  name: String!
+  amount: BigInt!
 }

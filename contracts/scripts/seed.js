@@ -1,22 +1,10 @@
 const {getNamedAccounts, ethers} = require("@nomiclabs/buidler");
 
-const names = [
-  "Hetrorlig Oakenbrow",
-  "Dermerlug Brewcloak",
-  "Nalol Blackbraids",
-  "Webir Goldenback",
-  "Dholdrec Chaosgrip",
-  "Siggog Strongjaw",
-  "Krostol Snowtank",
-  "Rumit Dragonarmour",
-  "Nemnad Thunderbrow",
-  "Gagham Grimbelly",
-];
 async function main() {
   const {others} = await getNamedAccounts();
   for (let i = 0; i < 4; i++) {
-    const blueCoatiContract = await ethers.getContract("BlueCoati", others[i]);
-    await blueCoatiContract.setName(names[i]);
+    const depositContract = await ethers.getContract("Deposit", others[i]);
+    await depositContract.deposit(1);
   }
 }
 
