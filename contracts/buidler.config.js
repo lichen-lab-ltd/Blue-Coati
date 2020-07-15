@@ -56,6 +56,7 @@ module.exports = {
   namedAccounts: {
     deployer: 0,
     daiMinter: 1,
+    judge: 2,
     others: "from:3",
   },
 };

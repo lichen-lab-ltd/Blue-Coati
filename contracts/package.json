@@ -37,6 +37,7 @@
     "compile": "buidler compile",
     "smartcheck": "smartcheck -p .",
     "test": "buidler compile && mocha --bail --recursive test",
+    "void:deploy": "buidler deploy",
     "local:dev": "buidler --network localhost deploy --watch",
     "local:deploy": "buidler --network localhost deploy",
     "local:run": "cross-env BUIDLER_NETWORK=localhost node",
