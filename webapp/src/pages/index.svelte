@@ -1,4 +1,5 @@
 <script>
+  import Button from '../components/basic/Button.svelte';
   import threads from '../stores/threads.js';
   import Box from '../3box.min.js';
   import {
@@ -8,13 +9,16 @@
     chain,
     balance,
   } from '../stores/wallet';
+  import box from '../stores/3box.js'
   let thread;
   let activeThread = 0;
   let init = async () => {
+    // initally thread to load without user auth
     thread = await Box.getThreadByAddress('/orbitdb/zdpuAp5QpBKR4BBVTvqe3KXVcNgo4z8Rkp9C5eK38iuEZj3jq/3box.thread.testSpace.testThread');
     console.log("got thread", thread)
   };
   init();
+  console.log($box)
 </script>
 
 <div class="grid grid-cols-3 gap-3">
@@ -40,6 +44,9 @@
         </div>
       </section>
     {/each}
+  {#if $box.status != 'Ready'}
+  <div><Button>Connect</Button></div>
+  {/if}
   </div>
 
   <div class="col-span-2">{thread}</div>
