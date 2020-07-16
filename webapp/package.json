@@ -13,6 +13,7 @@
     "@rollup/plugin-node-resolve": "^8.0.0",
     "@rollup/plugin-replace": "^2.3.2",
     "@urql/devtools": "^2.0.2",
+    "a17t": "^0.2.4",
     "autoprefixer": "^9.8.4",
     "bufferutil": "^4.0.1",
     "dotenv": "^8.2.0",
