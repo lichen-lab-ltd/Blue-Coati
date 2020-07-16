@@ -23,6 +23,7 @@
     "favicons": "^6.1.0",
     "hasha": "^5.2.0",
     "ipfs-gateway-emulator": "^4.2.1-ipfs.1",
+    "lorem-ipsum": "^2.0.3",
     "nollup": "^0.11.1",
     "postcss": "^7.0.32",
     "postcss-import": "^12.0.1",
