@@ -22,8 +22,11 @@ store.load = async function () {
       box.status = 'Error';
       box.msg = e;
     }
-    store.set(box);
+  } else {
+    box.status = 'Error';
+    box.msg = 'Please connect to web3 wallet first';
   }
+  store.set(box);
 };
 
 const {set, subscribe} = writable(box);
