@@ -18,7 +18,7 @@
     console.log("got thread", thread)
   };
   init();
-  console.log($box)
+  $: console.log($box)
 </script>
 
 <div class="grid grid-cols-3 gap-3">
@@ -45,10 +45,27 @@
       </section>
     {/each}
   {#if $box.status != 'Ready'}
-  <div><Button>Connect</Button></div>
+  <div><Button classname="~neutral" on:click={box.load}>Login to take part</Button></div>
   {/if}
   </div>
 
-  <div class="col-span-2">{thread}</div>
+  <div class="col-span-2">
+  {#if $box.status == 'Unavailable'}
+    {thread}
+  {:else if $box.status == 'Loading'}
+    <div>
+      Loading
+    </div>
+  {:else if $box.status == 'Ready'}
+    <div>
+      Ready - to load active thread
+    </div>
+  {:else if $box.status == 'Error'}
+    <div>
+      Error
+    </div>
+
+  {/if}
+  </div>
 
 </div>

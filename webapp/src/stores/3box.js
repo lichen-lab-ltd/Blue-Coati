@@ -7,17 +7,23 @@ let box = {status: 'Unavailable', box: {}, space: {}, msg: ''};
 store = {};
 
 store.load = async function () {
-  try {
-    let _box = await Box.openBox(wallet.address, window.ethereum);
-    let _space = await box.openSpace('blue-coati-dev');
-    box.status = 'Ready';
-    box.box = _box;
-    box.space = _space;
-  } catch (e) {
-    box.status = 'Error';
-    box.msg = e;
-  }
+  box.status = 'Loading';
   store.set(box);
+  if (!!wallet.address) {
+    console.log('loading');
+    try {
+      let _box = await Box.openBox(wallet.address, window.ethereum);
+      let _space = await _box.openSpace('blue-coati-dev');
+      box.status = 'Ready';
+      box.box = _box;
+      box.space = _space;
+    } catch (e) {
+      console.log(e);
+      box.status = 'Error';
+      box.msg = e;
+    }
+    store.set(box);
+  }
 };
 
 const {set, subscribe} = writable(box);
