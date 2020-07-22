@@ -14,7 +14,7 @@ contract Deposit is Proxied {
 
     function deposit(uint256 amount) external {
         require(_controller != address(0), "NOT_READY");
-        _deposits[msg.sender] = amount; // TODO
+        _deposits[msg.sender].amount = _deposits[msg.sender].amount.add(amount);
         emit DepositReceived(msg.sender, amount);
     }
 
@@ -29,8 +29,8 @@ contract Deposit is Proxied {
         uint256 amount
     ) external {
         require(msg.sender == _controller, "NOT_AUTHORIZED");
-        _deposits[from] = _deposits[from].sub(amount);
-        _deposits[to] = _deposits[to].add(amount);
+        _deposits[from].amount = _deposits[from].amount.sub(amount);
+        _deposits[to].amount = _deposits[to].amount.add(amount);
         emit Transfer(from, to, amount);
     }
 
@@ -46,9 +46,14 @@ contract Deposit is Proxied {
 
     // ///////////////////     DATA      //////////////////////////
 
+    struct DepositInfo {
+        uint256 amount; // TODO optimize it to 128 bit ?
+        uint64 withdrawalRequestTime; // TODO
+    }
+
     /*TODO immutable (if no proxy)*/
     address internal _token;
 
     address internal _controller;
-    mapping(address => uint256) internal _deposits;
+    mapping(address => DepositInfo) internal _deposits;
 }

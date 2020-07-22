@@ -6,8 +6,6 @@ import "./Deposit.sol";
 import "./Libraries/SigUtil.sol";
 
 contract Judgement is Proxied {
-    uint256 internal constant BET_AMOUNT = 1; // TODO
-
     function castJudgement(bytes32 documentId, bool accepted) external {
         require(msg.sender == _judge);
         require(_documents[documentId].judgementTime == 0, "ALREADY_DECIDED");
@@ -40,20 +38,28 @@ contract Judgement is Proxied {
                 keccak256(abi.encode(documentId, winningBetId, parentBetId, result)),
                 winningSig
             );
-            _deposit.transferFrom(loser, winner, BET_AMOUNT);
+            _deposit.transferFrom(loser, winner, _betAmount);
         } else {
-            _deposit.transferFrom(loser, address(this), BET_AMOUNT);
+            _deposit.transferFrom(loser, address(this), _betAmount);
         }
     }
 
     // ////////////////// CONSTRUCTOR /////////////////////////////
 
-    function postUpgrade(address judge, Deposit deposit) public proxied {
+    function postUpgrade(
+        address judge,
+        Deposit deposit,
+        uint64 claimPeriod,
+        uint64 betAmount
+    ) public proxied {
         _judge = judge;
         _deposit = deposit;
         _deposit.takeControl();
+        _claimPeriod = claimPeriod;
+        _betAmount = betAmount;
     }
 
+    // TODO : post development
     // constructor(address judge, Deposit deposit) public {
     //     postUpgrade(judge, deposit);
     // }
@@ -67,7 +73,9 @@ contract Judgement is Proxied {
     mapping(bytes32 => mapping(uint256 => bool)) _betsCounted;
 
     /*TODO immutable (if no proxy)*/
-    uint64 internal _claimPeriod = 7 days; // TODO constructor
+    uint64 internal _claimPeriod;
+    /*TODO immutable (if no proxy)*/
+    uint96 internal _betAmount = 1;
 
     /*TODO immutable (if no proxy)*/
     Deposit internal _deposit;

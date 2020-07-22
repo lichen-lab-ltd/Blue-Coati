@@ -41,9 +41,9 @@ contract JudgementWithChain is Judgement {
                 keccak256(abi.encode(documentId, pair.winningBetId, pair.parentBetId, result)),
                 pair.winningSig
             );
-            _deposit.transferFrom(loser, winner, BET_AMOUNT); // TODO optimize input to be in address order ?
+            _deposit.transferFrom(loser, winner, _betAmount); // TODO optimize input to be in address order ?
         } else {
-            _deposit.transferFrom(loser, address(this), BET_AMOUNT); // TODO optimize out of loop
+            _deposit.transferFrom(loser, address(this), _betAmount); // TODO optimize out of loop
         }
     }
 }
