@@ -19,7 +19,7 @@ contract Judgement is Proxied {
         uint256 losingBetId,
         bytes calldata losingsig,
         uint256 winningBetId,
-        uint256 chainBetId, // can be another losing bet // TODO chain it in a single call or can be 0 for document bet
+        uint256 parentBetId, // can be another losing bet // TODO chain it in a single call or can be 0 for document bet
         bytes calldata winningSig
     ) external {
         require(_documents[documentId].judgementTime > 0, "JUDGEMENT_DOESNT_EXIST");
@@ -35,9 +35,11 @@ contract Judgement is Proxied {
             losingsig
         );
 
-        address winner;
         if (winningBetId == 0) {
-            winner = SigUtil.recover(keccak256(abi.encode(documentId, winningBetId, chainBetId, result)), winningSig);
+            address winner = SigUtil.recover(
+                keccak256(abi.encode(documentId, winningBetId, parentBetId, result)),
+                winningSig
+            );
             _deposit.transferFrom(loser, winner, BET_AMOUNT);
         } else {
             _deposit.transferFrom(loser, address(this), BET_AMOUNT);
