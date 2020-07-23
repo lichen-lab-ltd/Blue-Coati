@@ -1,6 +1,7 @@
 <script>
   import Button from '../components/basic/Button.svelte';
-  import threads from '../stores/threads.js';
+  import Post from '../components/Post.svelte';
+
   import Box from '../3box.min.js';
   import {
     wallet,
@@ -9,63 +10,68 @@
     chain,
     balance,
   } from '../stores/wallet';
-  import box from '../stores/3box.js'
-  let thread;
-  let activeThread = 0;
+  import box from '../stores/3box.js';
+
   let init = async () => {
-    // initally thread to load without user auth
-    thread = await Box.getThreadByAddress('/orbitdb/zdpuAp5QpBKR4BBVTvqe3KXVcNgo4z8Rkp9C5eK38iuEZj3jq/3box.thread.testSpace.testThread');
-    console.log("got thread", thread)
+    let init_data = {posts: [], bets: []};
+    init_data.posts = await Box.getThreadByAddress(
+      '/orbitdb/zdpuAqAGkAzxibXccbKHKev5pKZcPKsaFAQD6upFofjF658Vt/3box.thread.blue-coati-dev.other-coati'
+    );
+    init_data.bets = await Box.getThreadByAddress(
+      '/orbitdb/zdpuAyirKfdqFE3mnqCho4AXv43HTkouXp4iwxjGWnmQSdXDa/3box.thread.blue-coati-dev.bets'
+    );
+    console.log(init_data);
+    return init_data;
   };
-  init();
-  $: console.log($box)
+  let addingPost = false;
+  let newPost;
+
+  $: console.log($box);
 </script>
 
 <div class="grid grid-cols-3 gap-3">
-
+  <!-- Left column -->
   <div class="col-span-1">
-    <h3 class="px-6 heading">Threads</h3>
-
-    {#each $threads as thread, index}
-      <section
-        class:~neutral="{activeThread != index}"
-        class:~urge="{activeThread == index}"
-        class=" m-2 card !normal content"
-        on:click="{() => (activeThread = index)}"
-      >
-        <div class="px-6 py-2">
-          <div class="font-bold text-xl mb-2">{thread.title}</div>
-          <p class="text-gray-700 text-base">{thread.description}</p>
-        </div>
-        <div class="px-6 py-2">
-          {#each thread.tags as tag}
-            <span class="badge ~info m-1">#{tag}</span>
-          {/each}
-        </div>
-      </section>
-    {/each}
-  {#if $box.status != 'Ready'}
-  <div><Button classname="~neutral" on:click={box.load}>Login to take part</Button></div>
-  {/if}
+    {#if $box.status != 'Ready'}
+      <div>
+        <Button classname="~neutral" on:click="{box.load}">
+          Login to take part
+        </Button>
+      </div>
+    {/if}
   </div>
 
+  <!-- Right column -->
   <div class="col-span-2">
-  {#if $box.status == 'Unavailable'}
-    {thread}
-  {:else if $box.status == 'Loading'}
-    <div>
-      Loading
-    </div>
-  {:else if $box.status == 'Ready'}
-    <div>
-      Ready - to load active thread
-    </div>
-  {:else if $box.status == 'Error'}
-    <div>
-      Error
-    </div>
-
-  {/if}
+    {#if $box.status == 'Unavailable'}
+      {#await init()}
+        <p>waiting for static posts</p>
+      {:then value}
+        {#each value.posts as post}
+          <Post post={post}></Post>
+        {/each}
+      {:catch error}
+        <p>Error in loading inital posts, please sign in</p>
+        <p>{error}</p>
+      {/await}
+    {:else if $box.status == 'Loading'}
+      <div>Loading</div>
+    {:else if $box.status == 'Ready'}
+      <div>
+        <textarea
+          class="textarea ~info !normal"
+          placeholder="What do you want to share?"
+          bind:value={newPost}
+        ></textarea>
+        <Button classname="~neutral" on:click="{box.addPost(newPost)}">
+          Add
+        </Button>
+        {#each $box.posts as post}
+          <Post post={post}></Post>
+        {/each}
+      </div>
+    {:else if $box.status == 'Error'}
+      <div>Error: {$box.msg}</div>
+    {/if}
   </div>
-
 </div>
