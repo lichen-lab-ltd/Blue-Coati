@@ -1,5 +1,8 @@
 <script>
   import Button from '../components/basic/Button.svelte';
+  import Modal from '../components/basic/Modal.svelte';
+  import Loading from '../components/Loading.svelte';
+  import PostForm from '../components/PostForm.svelte';
   import Post from '../components/Post.svelte';
 
   import Box from '../3box.min.js';
@@ -34,7 +37,7 @@
   <div class="col-span-1">
     {#if $box.status != 'Ready'}
       <div>
-        <Button classname="~neutral" on:click="{box.load}">
+        <Button classname="~neutral" on:click={() => box.load()}>
           Login to take part
         </Button>
       </div>
@@ -42,12 +45,13 @@
   </div>
 
   <!-- Right column -->
-  <div class="col-span-2">
+  <div class="col-span-2 px-3">
     {#if $box.status == 'Unavailable'}
       {#await init()}
         <p>waiting for static posts</p>
       {:then value}
-        {#each value.posts as post}
+        <PostForm />
+        {#each value.posts.reverse() as post}
           <Post post={post}></Post>
         {/each}
       {:catch error}
@@ -55,18 +59,13 @@
         <p>{error}</p>
       {/await}
     {:else if $box.status == 'Loading'}
-      <div>Loading</div>
+      <Modal closable="{false}">
+        <Loading />
+      </Modal>
     {:else if $box.status == 'Ready'}
       <div>
-        <textarea
-          class="textarea ~info !normal"
-          placeholder="What do you want to share?"
-          bind:value={newPost}
-        ></textarea>
-        <Button classname="~neutral" on:click="{box.addPost(newPost)}">
-          Add
-        </Button>
-        {#each $box.posts as post}
+        <PostForm />
+        {#each $box.posts.reverse() as post}
           <Post post={post}></Post>
         {/each}
       </div>

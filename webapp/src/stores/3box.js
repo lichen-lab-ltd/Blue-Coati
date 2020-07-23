@@ -10,32 +10,41 @@ store.load = async function () {
   console.log('loading');
   box.status = 'Loading';
   store.set(box);
-  if (!!wallet.address) {
-    try {
-      let _box = await Box.openBox(wallet.address, window.ethereum);
-      let _space = await _box.openSpace('blue-coati-dev');
-      let _posts = await _space.joinThread('other-coati', {
-        firstModerator: wallet.address,
-        member: false,
-      });
-      let _bets = await _space.joinThread('bets', {
-        firstModerator: wallet.address,
-        member: false,
-      });
-      box.status = 'Ready';
-      box.box = _box;
-      box.postsThread = _posts;
-      box.betsThread = _bets;
+
+  await wallet.connect('builtin'); // TODO choice
+  if (!wallet.address) {
+    await wallet.unlock(); // TOOO catch ?
+  }
+  try {
+    let _box = await Box.openBox(wallet.address, window.ethereum);
+    let _space = await _box.openSpace('blue-coati-dev');
+    let _posts = await _space.joinThread('other-coati', {
+      firstModerator: wallet.address,
+      member: false,
+    });
+    let _bets = await _space.joinThread('bets', {
+      firstModerator: wallet.address,
+      member: false,
+    });
+    _posts.onUpdate(async () => {
       box.posts = await _posts.getPosts();
+      store.set(box);
+    });
+    _bets.onUpdate(async () => {
       box.bets = await _bets.getPosts();
-    } catch (e) {
-      console.log(e);
-      box.status = 'Error';
-      box.msg = e;
-    }
-  } else {
+      store.set(box);
+    });
+
+    box.box = _box;
+    box.postsThread = _posts;
+    box.betsThread = _bets;
+    box.posts = await _posts.getPosts();
+    box.bets = await _bets.getPosts();
+    box.status = 'Ready';
+  } catch (e) {
+    console.log(e);
     box.status = 'Error';
-    box.msg = 'Please connect to web3 wallet first';
+    box.msg = e;
   }
   store.set(box);
 };
@@ -43,6 +52,9 @@ store.load = async function () {
 store.addPost = async function (_post) {
   console.log('adding');
   console.log(_post);
+  if (box.status != 'Ready') {
+    await store.load();
+  }
   try {
     // this returns postId if succeeds
     let postID = await box.postsThread.post(_post);
@@ -53,6 +65,9 @@ store.addPost = async function (_post) {
 };
 
 store.bet = async function (_isValid) {
+  if (box.status != 'Ready') {
+    box.load();
+  }
   console.log('betting', _isValid);
 };
 
