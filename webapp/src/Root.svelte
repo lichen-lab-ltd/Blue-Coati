@@ -8,7 +8,6 @@
 
 <nav class="flex justify-between">
   <div><Link name="Index">Home</Link><Link name="Wallet">Wallet</Link></div>
-  <div><Button>Connect</Button></div>
 </nav>
 
 <svelte:component this="{$response.body}" />

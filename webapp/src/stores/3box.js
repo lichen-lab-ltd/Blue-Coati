@@ -66,7 +66,7 @@ store.addPost = async function (_post) {
 
 store.bet = async function (_isValid) {
   if (box.status != 'Ready') {
-    box.load();
+    store.load();
   }
   console.log('betting', _isValid);
 };

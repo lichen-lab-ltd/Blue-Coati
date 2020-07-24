@@ -14,6 +14,7 @@
     balance,
   } from '../stores/wallet';
   import box from '../stores/3box.js';
+  import deposits from '../stores/deposits.js';
 
   let init = async () => {
     let init_data = {posts: [], bets: []};
@@ -30,6 +31,7 @@
   let newPost;
 
   $: console.log($box);
+  $: console.log($deposits)
 </script>
 
 <div class="grid grid-cols-3 gap-3">
@@ -37,7 +39,7 @@
   <div class="col-span-1">
     {#if $box.status != 'Ready'}
       <div>
-        <Button classname="~neutral" on:click={() => box.load()}>
+        <Button class="~neutral" on:click={() => box.load()}>
           Login to take part
         </Button>
       </div>

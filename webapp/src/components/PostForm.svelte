@@ -4,11 +4,13 @@
   let newPost;
 </script>
 
-<textarea
-  class="textarea ~info !normal"
-  placeholder="What do you want to share?"
-  bind:value={newPost}
-></textarea>
-<Button classname="~neutral" on:click={() => box.addPost(newPost)}>
-  Add
-</Button>
+<div class="flex justify-between">
+  <textarea
+    class="textarea ~info !normal"
+    placeholder="What do you want to share?"
+    bind:value={newPost}
+  ></textarea>
+  <Button class="~info" on:click={() => box.addPost(newPost)}>
+    Add
+  </Button>
+</div>

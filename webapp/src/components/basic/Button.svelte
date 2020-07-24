@@ -4,7 +4,7 @@
 </script>
 <button
   on:click
-  class="{`${className} bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`}"
+  class="{`${className} button !high m-2`}"
 >
   <slot></slot>
 </button>
