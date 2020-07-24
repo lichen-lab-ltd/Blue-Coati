@@ -9,7 +9,7 @@
   class="modal-background"
   on:click="{() => dispatch(closable ? 'close' : '')}"
 >
-  <div class="modal-main border border-indigo-800 bg-gray-500 text-lg flex justify-center items-center text-indigo-500">
+  <div class="modal-main border border-indigo-800 bg-gray-200 text-lg flex justify-center items-center text-indigo-500">
     <slot/>
   </div>
 </div>

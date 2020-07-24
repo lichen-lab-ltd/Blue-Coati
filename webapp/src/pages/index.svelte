@@ -14,7 +14,7 @@
     balance,
   } from '../stores/wallet';
   import box from '../stores/3box.js';
-  import deposits from '../stores/deposits.js';
+  import userDeposit from '../stores/my_deposit.js';
 
   let init = async () => {
     let init_data = {posts: [], bets: []};
@@ -24,24 +24,31 @@
     init_data.bets = await Box.getThreadByAddress(
       '/orbitdb/zdpuAyirKfdqFE3mnqCho4AXv43HTkouXp4iwxjGWnmQSdXDa/3box.thread.blue-coati-dev.bets'
     );
-    console.log(init_data);
     return init_data;
   };
   let addingPost = false;
   let newPost;
 
   $: console.log($box);
-  $: console.log($deposits)
+  $: console.log($userDeposit.data)
 </script>
 
 <div class="grid grid-cols-3 gap-3">
   <!-- Left column -->
   <div class="col-span-1">
     {#if $box.status != 'Ready'}
-      <div>
-        <Button class="~neutral" on:click={() => box.load()}>
-          Login to take part
+      <div class="flex flex-col flex-stretch justify-center items-center">
+      <p class="subheading ~neutral !low"> Curator stats </p>
+        <Button class="~neutral field mt-5" on:click={() => box.load()}>
+          Login
         </Button>
+      </div>
+    {:else if $userDeposit.data}
+      <div >
+      <p class="subheading">You are signed in as:</p>
+      <p class="text-xs">{$userDeposit.data.userDeposit.id}</p>
+      <p class="subheading">Bets available:</p>
+      <p class="heading">{$userDeposit.data.userDeposit.amount}</p>
       </div>
     {/if}
   </div>
