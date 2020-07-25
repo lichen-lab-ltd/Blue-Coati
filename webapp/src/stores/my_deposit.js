@@ -25,7 +25,7 @@ export default derived(
           }
         `,
           variables: {
-            userAddress: '0x5d109a0eb89d225181cd2bf03ee3f60f8b1cd2e6',
+            userAddress: $wallet.address,
           },
         }).subscribe((r) => {
           set(r);

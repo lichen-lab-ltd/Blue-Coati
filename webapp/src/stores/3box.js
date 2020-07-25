@@ -50,15 +50,13 @@ store.load = async function () {
 };
 
 store.addPost = async function (_post) {
-  console.log('adding');
-  console.log(_post);
   if (box.status != 'Ready') {
     await store.load();
   }
   try {
     // this returns postId if succeeds
     let postID = await box.postsThread.post(_post);
-    console.log('success:', postID);
+    // TODO Bet
   } catch (e) {
     console.log(e);
   }
