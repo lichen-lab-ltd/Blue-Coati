@@ -18,14 +18,12 @@ store.load = async function () {
   try {
     let _box = await Box.openBox(wallet.address, window.ethereum);
     let _space = await _box.openSpace('blue-coati-dev');
-    let _posts = await _space.joinThread('other-coati', {
-      firstModerator: wallet.address,
-      member: false,
-    });
-    let _bets = await _space.joinThread('bets', {
-      firstModerator: wallet.address,
-      member: false,
-    });
+    let _posts = await _space.joinThreadByAddress(
+      '/orbitdb/zdpuAqAGkAzxibXccbKHKev5pKZcPKsaFAQD6upFofjF658Vt/3box.thread.blue-coati-dev.other-coati'
+    );
+    let _bets = await _space.joinThreadByAddress(
+      '/orbitdb/zdpuAyirKfdqFE3mnqCho4AXv43HTkouXp4iwxjGWnmQSdXDa/3box.thread.blue-coati-dev.bets'
+    );
     _posts.onUpdate(async () => {
       box.posts = await _posts.getPosts();
       store.set(box);
@@ -62,11 +60,22 @@ store.addPost = async function (_post) {
   }
 };
 
-store.bet = async function (_isValid) {
+store.bet = async function (_isValid, _postId) {
   if (box.status != 'Ready') {
     store.load();
   }
   console.log('betting', _isValid);
+};
+
+store.staticInit = async () => {
+  let init_data = {posts: [], bets: []};
+  init_data.posts = await Box.getThreadByAddress(
+    '/orbitdb/zdpuAqAGkAzxibXccbKHKev5pKZcPKsaFAQD6upFofjF658Vt/3box.thread.blue-coati-dev.other-coati'
+  );
+  init_data.bets = await Box.getThreadByAddress(
+    '/orbitdb/zdpuAyirKfdqFE3mnqCho4AXv43HTkouXp4iwxjGWnmQSdXDa/3box.thread.blue-coati-dev.bets'
+  );
+  return init_data;
 };
 
 const {set, subscribe} = writable(box);

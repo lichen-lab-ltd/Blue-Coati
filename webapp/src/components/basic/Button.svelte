@@ -4,7 +4,7 @@
 </script>
 <button
   on:click
-  class="{`${className} button !high m-2`}"
+  class="{`${className} button`}"
 >
   <slot></slot>
 </button>
