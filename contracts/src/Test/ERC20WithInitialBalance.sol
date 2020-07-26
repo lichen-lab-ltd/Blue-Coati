@@ -3,7 +3,7 @@ pragma solidity 0.6.5;
 import "./BaseERC20.sol";
 import "../Interfaces/ERC20With2612.sol";
 
-contract ERC20ithInitialBalance is BaseERC20, ERC20With2612 {
+contract ERC20WithInitialBalance is BaseERC20, ERC20With2612 {
     // TODO inject actual hash or use 0.6.12
     bytes32 internal constant PERMIT_TYPEHASH = keccak256(
         "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
@@ -52,7 +52,7 @@ contract ERC20ithInitialBalance is BaseERC20, ERC20With2612 {
 
     // //////////////////////////////////// CONSTRUCTOR ///////////////////////////////////////////
 
-    constructor(uint256 supply) public BaseERC20(supply) {
+    constructor(uint256 supply, uint256 initialIndividualSupply) public BaseERC20(supply, initialIndividualSupply) {
         // TODO chainId
         _DOMAIN_SEPARATOR = keccak256(
             abi.encode(

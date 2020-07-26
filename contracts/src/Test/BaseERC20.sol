@@ -90,8 +90,8 @@ abstract contract BaseERC20 is ERC20 {
         if (!_claimed[owner] && _supplyClaimed < _totalSupply) {
             claimed = false;
             balance = _totalSupply - _supplyClaimed;
-            if (balance > 10000000000000000000) {
-                balance = 10000000000000000000;
+            if (balance > _initialIndividualSupply) {
+                balance = _initialIndividualSupply;
             }
         } else {
             claimed = true;
@@ -134,6 +134,7 @@ abstract contract BaseERC20 is ERC20 {
 
     /*immutable*/
     uint256 internal _totalSupply;
+    uint256 internal _initialIndividualSupply;
     mapping(address => uint256) internal _balances;
     mapping(address => mapping(address => uint256)) internal _allowances;
 
@@ -141,7 +142,8 @@ abstract contract BaseERC20 is ERC20 {
     mapping(address => bool) internal _claimed; // TODO optimize it by storing it in the same slot as _balances
 
     // //////////////////////////////////// CONSTRUCTOR ///////////////////////////////////////////
-    constructor(uint256 supply) public {
+    constructor(uint256 supply, uint256 initialIndividualSupply) public {
         _totalSupply = supply;
+        _initialIndividualSupply = initialIndividualSupply;
     }
 }
