@@ -31,19 +31,26 @@ contract JudgementWithChain is Judgement {
         require(_betsCounted[documentId][pair.losingBetId] == false, "ALREADY_SUBMITED");
         _betsCounted[documentId][pair.losingBetId] = true;
 
+        address expectedLoser = address(uint160(pair.losingBetId >> 96));
         address loser = SigUtil.recover(
             keccak256(abi.encode(documentId, pair.losingBetId, pair.winningBetId, !result)),
             pair.losingsig
         );
+        require(expectedLoser == loser, "INVALID_LOSER_SIGNATURE");
 
-        if (pair.winningBetId == 0) {
-            address winner = SigUtil.recover(
-                keccak256(abi.encode(documentId, pair.winningBetId, pair.parentBetId, result)),
-                pair.winningSig
-            );
-            _deposit.transferFrom(loser, winner, _betAmount); // TODO optimize input to be in address order ?
+        if (pair.winningBetId != 0) {
+            if (_betsCounted[documentId][pair.winningBetId] == false) {
+                _betsCounted[documentId][pair.winningBetId] = true; // Can get reward only once
+                address expectedWinner = address(uint160(pair.winningBetId >> 96));
+                address winner = SigUtil.recover(
+                    keccak256(abi.encode(documentId, pair.winningBetId, pair.parentBetId, result)),
+                    pair.winningSig
+                );
+                require(expectedWinner == winner, "INVALID_WINNER_SIGNATURE");
+                _deposit.transferFrom(loser, winner, _betAmount);
+            }
         } else {
-            _deposit.transferFrom(loser, address(this), _betAmount); // TODO optimize out of loop
+            _deposit.transferFrom(loser, address(this), _betAmount);
         }
     }
 }
