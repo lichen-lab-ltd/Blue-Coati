@@ -8,9 +8,7 @@
   <textarea
     class="textarea ~urge !high ml-1"
     placeholder="What do you want to share?"
-    bind:value={newPost}
+    bind:value="{newPost}"
   ></textarea>
-  <Button class="~urge mx-1" on:click={() => box.addPost(newPost)}>
-    ✒️
-  </Button>
+  <Button class="~urge mx-1" on:click="{() => box.addPost(newPost)}">✒️</Button>
 </div>

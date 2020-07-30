@@ -1,6 +1,8 @@
 import Box from '../3box.min.js';
 import {writable} from 'svelte/store';
-import {wallet} from '../stores/wallet';
+import {wallet} from './wallet';
+import {map} from './postBetsMapping.js';
+import local from '../utils/local';
 
 let store;
 let box = {status: 'Unavailable', box: {}, posts: [], bets: [], msg: ''};
@@ -52,9 +54,8 @@ store.addPost = async function (_post) {
     await store.load();
   }
   try {
-    // this returns postId if succeeds
-    let postID = await box.postsThread.post(_post);
-    // TODO Bet
+    let postId = await box.postsThread.post(_post);
+    store.bet(true, postId);
   } catch (e) {
     console.log(e);
   }
@@ -62,12 +63,44 @@ store.addPost = async function (_post) {
 
 store.bet = async function (_isValid, _postId) {
   if (box.status != 'Ready') {
-    store.load();
+    await store.load();
   }
-  console.log('betting', _isValid);
+  local.get('blue-coati-dev-bets');
+  let localData = local.data;
+  let bet = {
+    postId: _postId,
+    isValid: _isValid,
+  };
+  let betId = await box.betsThread.post(bet);
+  if (localData) {
+    if (localData[box.box.DID]) {
+      localData[box.box.DID][betId] = bet;
+    } else {
+      localData[box.box.DID] = {[betId]: bet};
+    }
+    local.write('blue-coati-dev-bets', localData);
+  } else {
+    console.log('no local');
+    let newLB = {[box.box.DID]: {[betId]: bet}};
+    local.write('blue-coati-dev-bets', newLB);
+  }
 };
 
-store.staticInit = async () => {
+store.deleteAllBets = async function () {
+  if (box.status != 'Ready') {
+    await store.load();
+  }
+  try {
+    box.bets.forEach(async (b) => {
+      await box.betsThread.deletePost(b.postId);
+    });
+    local.write('blue-coati-dev-bets', '');
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+store.staticInit = async function () {
   let init_data = {posts: [], bets: []};
   init_data.posts = await Box.getThreadByAddress(
     '/orbitdb/zdpuAqAGkAzxibXccbKHKev5pKZcPKsaFAQD6upFofjF658Vt/3box.thread.blue-coati-dev.other-coati'
@@ -75,6 +108,8 @@ store.staticInit = async () => {
   init_data.bets = await Box.getThreadByAddress(
     '/orbitdb/zdpuAyirKfdqFE3mnqCho4AXv43HTkouXp4iwxjGWnmQSdXDa/3box.thread.blue-coati-dev.bets'
   );
+  init_data.mapping = map(init_data.bets);
+  console.log(init_data);
   return init_data;
 };
 

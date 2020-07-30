@@ -7,6 +7,7 @@
   import Header from '../components/Header.svelte';
 
   import box from '../stores/3box.js';
+  import {mapping} from '../stores/postBetsMapping.js';
 
   let addingPost = false;
   let newPost;
@@ -27,7 +28,7 @@
       {:then value}
         <PostForm />
         {#each value.posts.reverse() as post}
-          <Post post={post}></Post>
+          <Post post={post} betsMap={value.mapping}></Post>
         {/each}
       {:catch error}
         <p>Error in loading inital posts, please sign in</p>
@@ -37,7 +38,7 @@
       <div>
         <PostForm />
         {#each $box.posts.reverse() as post}
-          <Post post={post}></Post>
+          <Post post={post} betsMap={$mapping}></Post>
         {/each}
       </div>
     {:else if $box.status == 'Error'}
