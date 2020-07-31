@@ -5,9 +5,6 @@
     let date = new Date(_time);
     return date.toLocaleString();
   };
-
-  $: console.log(betsMap)
-
 </script>
 
 <section class="~neutral m-2 card !normal content bg-gray-700">
@@ -19,13 +16,15 @@
       on:click="{() => box.bet(true, post.postId)}"
       class="badge ~positive m-1"
     >
-      {betsMap[post.postId] ? betsMap[post.postId].isValid ? betsMap[post.postId].isValid : 0 : 0 } 👍
+      {betsMap[post.postId] ? (betsMap[post.postId].isValid ? betsMap[post.postId].isValid : 0) : 0}
+      👍
     </button>
     <button
       on:click="{() => box.bet(false, post.postId)}"
       class="badge ~critical m-1"
     >
-      {betsMap[post.postId] ? betsMap[post.postId].notValid ? betsMap[post.postId].notValid : 0 : 0 } 👎
+      {betsMap[post.postId] ? (betsMap[post.postId].notValid ? betsMap[post.postId].notValid : 0) : 0}
+      👎
     </button>
     <span class="m-1 text-sm text-gray-500">
       Posted on: {timeToDateTime(post.timestamp * 1000)}

@@ -109,7 +109,7 @@ store.staticInit = async function () {
     '/orbitdb/zdpuAyirKfdqFE3mnqCho4AXv43HTkouXp4iwxjGWnmQSdXDa/3box.thread.blue-coati-dev.bets'
   );
   init_data.mapping = map(init_data.bets);
-  console.log(init_data);
+  console.log('init: ', init_data);
   return init_data;
 };
 

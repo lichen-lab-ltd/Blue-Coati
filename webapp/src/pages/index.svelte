@@ -20,7 +20,7 @@
 
   <!-- Posts -->
   <div class="px-3 md:w-full lg:w-3/4 justify-center">
-    {#if $box.status == 'Unavailable' || $box.status == 'Loading' }
+    {#if $box.status == 'Unavailable' || $box.status == 'Loading'}
       {#await box.staticInit()}
         <div class="flex h-screen items-center justify-center">
           <Loading />
@@ -28,7 +28,7 @@
       {:then value}
         <PostForm />
         {#each value.posts.reverse() as post}
-          <Post post={post} betsMap={value.mapping}></Post>
+          <Post {post} betsMap="{value.mapping}" />
         {/each}
       {:catch error}
         <p>Error in loading inital posts, please sign in</p>
@@ -38,7 +38,7 @@
       <div>
         <PostForm />
         {#each $box.posts.reverse() as post}
-          <Post post={post} betsMap={$mapping}></Post>
+          <Post {post} betsMap="{$mapping}" />
         {/each}
       </div>
     {:else if $box.status == 'Error'}

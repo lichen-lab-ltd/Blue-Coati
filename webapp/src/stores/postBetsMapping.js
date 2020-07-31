@@ -15,8 +15,8 @@ const map = function (_bets) {
         ? (_map[b.message.postId]['isValid'] += 1)
         : (_map[b.message.postId]['notValid'] += 1)
       : b.message.isValid
-      ? (_map[b.message.postId] = {isValid: 1})
-      : (_map[b.message.postId] = {notValid: 1});
+      ? (_map[b.message.postId] = {isValid: 1, notValid: 0})
+      : (_map[b.message.postId] = {isValid: 0, notValid: 1});
   });
   return _map;
 };
