@@ -8,7 +8,7 @@ const findInTree = function (parent, filter) {
   }
   if (parent.children && parent.children.length > 0) {
     for (const child of children) {
-      const found = traverseTree(child, filter);
+      const found = findInTree(child, filter);
       if (found) {
         return found;
       }
