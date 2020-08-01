@@ -3,35 +3,36 @@ import {writable} from 'svelte/store';
 import {wallet} from './wallet';
 import {map} from './postBetsMapping.js';
 import local from '../utils/local';
-import {EIP712Signer} from '../utils/eip712';
+import {betSigner} from '../utils/eip712';
+import {generateBetTree, getFreestParent, insertInTree} from '../utils/bettree';
 import {keccak256} from '@ethersproject/solidity';
 import {BigNumber} from '@ethersproject/bignumber';
 
 let store;
-let box = {status: 'Unavailable', box: {}, posts: [], bets: [], msg: ''};
+let box = {
+  status: 'Unavailable',
+  box: {},
+  posts: [],
+  bets: [],
+  msg: '',
+  betTrees: {},
+};
 store = {};
 
-const eip712Struct = {
-  types: {
-    EIP712Domain: [
-      {name: 'name', type: 'string'},
-      // {name: 'chainId', type: 'uint256'},
-    ],
-    Bet: [
-      {name: 'documentId', type: 'bytes32'},
-      {name: 'id', type: 'uint256'},
-      {name: 'parentId', type: 'uint256'},
-      // {name: 'isValid', type: 'bool'},
-      {name: 'isValid', type: 'string'}, // TODO fix Metamask
-    ],
-  },
-  domain: {
-    name: 'Judgment',
-    // chainId,
-  },
-  primaryType: 'Bet',
-};
-const eip712Signer = new EIP712Signer(eip712Struct);
+function transformBox(box) {
+  const bets = box.bets;
+  for (let i = 0; i < bets.length; i++) {
+    if (bets[i].message.version !== 1) {
+      // bets.splice(i, 1); // TODO ?
+    }
+  }
+  for (const post of box.posts) {
+    const betTree = generateBetTree(post.postId, box.bets);
+    if (betTree) {
+      box.betTrees[post.postId] = betTree;
+    }
+  }
+}
 
 store.load = async function () {
   console.log('loading');
@@ -53,10 +54,12 @@ store.load = async function () {
     );
     _posts.onUpdate(async () => {
       box.posts = await _posts.getPosts();
+      transformBox(box);
       store.set(box);
     });
     _bets.onUpdate(async () => {
       box.bets = await _bets.getPosts();
+      transformBox(box);
       store.set(box);
     });
 
@@ -71,6 +74,7 @@ store.load = async function () {
     box.status = 'Error';
     box.msg = e;
   }
+  transformBox(box);
   store.set(box);
 };
 
@@ -86,13 +90,20 @@ store.addPost = async function (_post) {
   }
 };
 
-store.bet = async function (_isValid, _postId, parent) {
+store.bet = async function (_isValid, _postId) {
   if (box.status != 'Ready') {
     await store.load();
   }
   local.get('blue-coati-dev-bets');
   let localData = local.data;
-  const parentId = parent ? parent.id : '0';
+
+  const betTree = box.betTrees[_postId] || {
+    postId: _postId,
+    id: '0',
+    children: [],
+  };
+  const parent = getFreestParent(betTree);
+
   const incrementId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER); // TODO increment
   const id = BigNumber.from(2)
     .pow(96)
@@ -102,32 +113,27 @@ store.bet = async function (_isValid, _postId, parent) {
   const message = {
     documentId: keccak256(['string'], [_postId]),
     id,
-    parentId,
+    parentId: parent.id || '0',
     isValid: _isValid ? 'true' : 'false',
   };
   const signature = await wallet.provider.send('eth_signTypedData_v4', [
     wallet.address,
-    eip712Signer.construct(message),
+    betSigner.construct(message),
   ]);
 
-  let bet = {
-    postId: _postId, // TODO rename documentId ?
-    id,
-    parent,
-    isValid: _isValid,
-    signature,
-  };
-  let betId = await box.betsThread.post(bet);
+  const newBetTree = insertInTree(betTree, parent, id, _isValid, signature);
+
+  let betId = await box.betsThread.post(newBetTree);
   if (localData) {
     if (localData[box.box.DID]) {
-      localData[box.box.DID][betId] = bet;
+      localData[box.box.DID][betId] = newBetTree;
     } else {
-      localData[box.box.DID] = {[betId]: bet};
+      localData[box.box.DID] = {[betId]: newBetTree};
     }
     local.write('blue-coati-dev-bets', localData);
   } else {
     console.log('no local');
-    let newLB = {[box.box.DID]: {[betId]: bet}};
+    let newLB = {[box.box.DID]: {[betId]: newBetTree}};
     local.write('blue-coati-dev-bets', newLB);
   }
 };
@@ -147,14 +153,15 @@ store.deleteAllBets = async function () {
 };
 
 store.staticInit = async function () {
-  let init_data = {posts: [], bets: []};
+  let init_data = {posts: [], bets: [], betTrees: {}};
   init_data.posts = await Box.getThreadByAddress(
     '/orbitdb/zdpuAqAGkAzxibXccbKHKev5pKZcPKsaFAQD6upFofjF658Vt/3box.thread.blue-coati-dev.other-coati'
   );
   init_data.bets = await Box.getThreadByAddress(
     '/orbitdb/zdpuAyirKfdqFE3mnqCho4AXv43HTkouXp4iwxjGWnmQSdXDa/3box.thread.blue-coati-dev.bets'
   );
-  init_data.mapping = map(init_data.bets);
+  transformBox(init_data);
+  init_data.mapping = map(init_data.betTrees);
   console.log('init: ', init_data);
   return init_data;
 };
