@@ -25,9 +25,11 @@ export default derived(
           }
         `,
           variables: {
-            userAddress: $wallet.address,
+            userAddress: $wallet.address.toLowerCase(),
           },
         }).subscribe((r) => {
+          console.log('subscribed for :', $wallet.address);
+          console.log(r);
           set(r);
         });
       }
