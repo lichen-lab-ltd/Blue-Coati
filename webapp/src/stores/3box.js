@@ -86,13 +86,13 @@ store.addPost = async function (_post) {
   }
 };
 
-store.bet = async function (_isValid, _postId) {
+store.bet = async function (_isValid, _postId, parentBet) {
   if (box.status != 'Ready') {
     await store.load();
   }
   local.get('blue-coati-dev-bets');
   let localData = local.data;
-  const _parentId = 0; // TODO oposite bet
+  const parentId = parentBet ? parentBet.id : '0';
   const incrementId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER); // TODO increment
   const id = BigNumber.from(2)
     .pow(96)
@@ -102,7 +102,7 @@ store.bet = async function (_isValid, _postId) {
   const message = {
     documentId: keccak256(['string'], [_postId]),
     id,
-    parentId: _parentId,
+    parentId,
     isValid: _isValid ? 'true' : 'false',
   };
   const signature = await wallet.provider.send('eth_signTypedData_v4', [
@@ -113,7 +113,7 @@ store.bet = async function (_isValid, _postId) {
   let bet = {
     postId: _postId, // TODO rename documentId ?
     id,
-    parentId: _parentId,
+    parentBet,
     isValid: _isValid,
     signature,
   };
