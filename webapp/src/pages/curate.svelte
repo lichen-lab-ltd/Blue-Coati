@@ -10,7 +10,7 @@
 <div class="flex flex-col items-center bg-gray-800">
   <Header />
   <Button on:click="{() => box.deleteAllBets()}">Dev: delete bets</Button>
-
+  
   <div class="px-3 md:w-full lg:w-3/4 justify-center">
     {#if $box.status == 'Unavailable' || $box.status == 'Loading'}
       {#await box.staticInit()}
