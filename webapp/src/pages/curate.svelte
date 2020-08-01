@@ -5,6 +5,9 @@
   import Header from '../components/Header.svelte';
 
   import box from '../stores/3box';
+  import {mapping} from '../stores/my_bets';
+
+  $: console.log(JSON.stringify($mapping))
 </script>
 
 <div class="flex flex-col items-center bg-gray-800">

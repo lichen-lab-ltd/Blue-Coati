@@ -11,9 +11,18 @@ const mapping = derived(box, ($box, set) => {
 const map = function (betTrees) {
   const counts = {};
   for (const postId of Object.keys(betTrees)) {
-    counts[postId] = countTree(betTrees[postId]);
+    let initCounts = {isValidCount: 0, isInvalidCount: 0};
+    const countFunc = (bet, parent) => {
+      if (parent) {
+        if (bet.isValid) {
+          initCounts.isValidCount++;
+        } else {
+          initCounts.isInvalidCount++;
+        }
+      }
+    };
+    counts[postId] = countTree(betTrees[postId], initCounts, countFunc);
   }
-
   return counts;
 };
 
