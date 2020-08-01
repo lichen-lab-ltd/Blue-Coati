@@ -13,7 +13,8 @@
   <Button on:click="{() => box.deleteAllBets()}">Dev: delete bets</Button>
   <div flex flex-col>
     <input
-      class="bind:value={amount} border border-pink-500 bg-gray-800 text-pink-500 input !low mb-4 mr-4 w-auto"
+      bind:value={amount}
+      class="border border-pink-500 bg-gray-800 text-pink-500 input !low mb-4 mr-4 w-auto"
       placeholder="Amount"
       type="text"
     />
