@@ -70,7 +70,14 @@ export function generateBetTree(postId, bets) {
             if (bet.id && !betIdChecked[bet.id]) {
               if (checkSigner(bet, postId, parent.id)) {
                 betIdChecked[bet.id] = true;
-                insertInTree(root, parent, bet.id, bet.isValid, bet.signature);
+                insertInTree(
+                  root,
+                  parent,
+                  bet.id,
+                  bet.isValid,
+                  bet.signature,
+                  bet3box.author
+                );
               }
             }
           },
@@ -83,7 +90,7 @@ export function generateBetTree(postId, bets) {
   return root;
 }
 
-export function insertInTree(root, parent, id, isValid, signature) {
+export function insertInTree(root, parent, id, isValid, signature, author) {
   const newTree = root; // TODO clone
   let parentTree;
   if (parent) {
@@ -101,6 +108,7 @@ export function insertInTree(root, parent, id, isValid, signature) {
     id,
     isValid,
     signature,
+    author,
     children: [],
   });
   return newTree;
@@ -110,20 +118,11 @@ export function getFreestParent(root) {
   return root;
 }
 
-export function countTree(root) {
-  const count = {isValidCount: 0, isInvalidCount: 0};
+export function countTree(root, initState, countFunc) {
+  const count = initState;
   if (!root) {
     console.log({root});
   }
-
-  traverseTree(root, (bet, parent) => {
-    if (parent) {
-      if (bet.isValid) {
-        count.isValidCount++;
-      } else {
-        count.isInvalidCount++;
-      }
-    }
-  });
+  traverseTree(root, countFunc);
   return count;
 }

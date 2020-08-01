@@ -64,6 +64,7 @@ store.load = async function () {
     });
 
     box.box = _box;
+    box.spaceDID = _space.DID;
     box.postsThread = _posts;
     box.betsThread = _bets;
     box.posts = await _posts.getPosts();

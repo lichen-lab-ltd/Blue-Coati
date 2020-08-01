@@ -6,6 +6,9 @@
   import deposits from '../stores/deposits';
   import deposit from '../stores/manageDeposits';
   import box from '../stores/3box';
+  import {mapping} from '../stores/my_bets';
+
+  $: console.log(JSON.stringify($mapping))
   let amount;
 
   function manageDeposit(_isAdd){
