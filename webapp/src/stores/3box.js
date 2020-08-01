@@ -86,13 +86,13 @@ store.addPost = async function (_post) {
   }
 };
 
-store.bet = async function (_isValid, _postId, parentBet) {
+store.bet = async function (_isValid, _postId, parent) {
   if (box.status != 'Ready') {
     await store.load();
   }
   local.get('blue-coati-dev-bets');
   let localData = local.data;
-  const parentId = parentBet ? parentBet.id : '0';
+  const parentId = parent ? parent.id : '0';
   const incrementId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER); // TODO increment
   const id = BigNumber.from(2)
     .pow(96)
@@ -113,7 +113,7 @@ store.bet = async function (_isValid, _postId, parentBet) {
   let bet = {
     postId: _postId, // TODO rename documentId ?
     id,
-    parentBet,
+    parent,
     isValid: _isValid,
     signature,
   };
