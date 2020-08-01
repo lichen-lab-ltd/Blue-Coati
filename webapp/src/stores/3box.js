@@ -3,10 +3,34 @@ import {writable} from 'svelte/store';
 import {wallet} from './wallet';
 import {map} from './postBetsMapping.js';
 import local from '../utils/local';
+import {EIP712Signer} from '../utils/eip712';
+import {keccak256} from '@ethersproject/solidity';
 
 let store;
 let box = {status: 'Unavailable', box: {}, posts: [], bets: [], msg: ''};
 store = {};
+
+const eip712Struct = {
+  types: {
+    EIP712Domain: [
+      {name: 'name', type: 'string'},
+      // {name: 'chainId', type: 'uint256'},
+    ],
+    Bet: [
+      {name: 'signer', type: 'address'},
+      {name: 'documentId', type: 'bytes32'},
+      {name: 'parentId', type: 'uint256'},
+      // {name: 'isValid', type: 'bool'},
+      {name: 'isValid', type: 'string'}, // TODO fix Metamask
+    ],
+  },
+  domain: {
+    name: 'Judgment',
+    // chainId,
+  },
+  primaryType: 'Bet',
+};
+const eip712Signer = new EIP712Signer(eip712Struct);
 
 store.load = async function () {
   console.log('loading');
@@ -67,9 +91,24 @@ store.bet = async function (_isValid, _postId) {
   }
   local.get('blue-coati-dev-bets');
   let localData = local.data;
+  const _parentId = 0; // TODO oposite bet
+  const message = {
+    signer: wallet.address,
+    documentId: keccak256(['string'], [_postId]),
+    parentId: _parentId,
+    isValid: _isValid ? 'true' : 'false',
+  };
+  const signature = await wallet.provider.send('eth_signTypedData_v4', [
+    wallet.address,
+    eip712Signer.construct(message),
+  ]);
+
   let bet = {
+    signer: wallet.address,
     postId: _postId,
     isValid: _isValid,
+    parentId: _parentId,
+    signature,
   };
   let betId = await box.betsThread.post(bet);
   if (localData) {
