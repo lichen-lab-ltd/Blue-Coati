@@ -103,7 +103,7 @@ store.bet = async function (_isValid, _postId) {
     id: '0',
     children: [],
   };
-  const parent = getFreestParent(betTree);
+  const parent = getFreestParent(betTree, _isValid);
 
   const incrementId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER); // TODO increment
   const id = BigNumber.from(2)
