@@ -3,10 +3,19 @@
   import Modal from '../components/basic/Modal.svelte';
   import Loading from '../components/Loading.svelte';
   import Header from '../components/Header.svelte';
+  import deposits from '../stores/deposits';
   import deposit from '../stores/manageDeposits';
   import box from '../stores/3box';
   let amount;
+
+  function manageDeposit(_isAdd){
+    _isAdd ? deposit.add(amount) : deposit.withdraw(amount);
+    amount = null
+  }
+  deposits.listen()
+  $: console.log($deposits)
 </script>
+
 
 <div class="flex flex-col items-center bg-gray-800">
   <Header />
@@ -20,13 +29,14 @@
     />
     <Button
       class="text-sm border border-blue-300 text-gray-200 justify-center"
-      on:click="{() => deposit.add(amount)}"
+      on:click={() => manageDeposit(true)}
     >
       Make Deposit
     </Button>
     <Button
       class="text-sm border border-gray-500 text-gray-200 justify-center"
-      on:click="{() => deposit.withdraw(amount)}"
+      on:click={() => manageDeposit(false)}
+
     >
       Withdraw
     </Button>

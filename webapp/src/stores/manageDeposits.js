@@ -1,17 +1,21 @@
 import {writable} from 'svelte/store';
 import {wallet, builtin, chain, transactions, balance} from './wallet';
+import box from './3box';
+import {BigNumber} from '@ethersproject/bignumber';
 
 let store = {};
 
 store.add = async function (_amount) {
-  await wallet.connect('builtin'); // TODO choice
-  console.log(wallet);
-  if (!wallet.address) {
-    await wallet.unlock(); // TOOO catch ?
+  if (box.status != 'Ready') {
+    await box.load();
   }
-  console.log(wallet.contracts);
   try {
-    await wallet.contracts.Deposit.deposit(parseFloat(_amount));
+    // TODO: check units
+    let amountEth = BigNumber.from(parseFloat(_amount)).mul(
+      BigNumber.from(10).pow(12)
+    );
+    console.log(amountEth.toString());
+    await wallet.contracts.Deposit.deposit(amountEth);
   } catch (e) {
     console.log(e);
   }
