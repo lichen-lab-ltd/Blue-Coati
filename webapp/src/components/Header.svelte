@@ -9,9 +9,7 @@
     chain,
     balance,
   } from '../stores/wallet';
-  import box from '../stores/3box.js';
-  import deposit from '../store/manageDeposits.js'
-
+  import box from '../stores/3box';
 </script>
 
 <div class="flex flex-col flex-stretch items-center md:w-full lg:w-3/4">
@@ -36,16 +34,4 @@
       </p>
     </div>
   {/if}
-  <Button
-    class="mt-5 w-48 text-sm text-gray-200 justify-center"
-    on:click="{() => deposit.add()}"
-  >
-    Make Deposit
-  </Button>
-  <Button
-    class="mt-5 w-48 text-sm text-gray-200 justify-center"
-    on:click="{() => deposit.withdraw()}"
-  >
-    Withdraw
-  </Button>
 </div>

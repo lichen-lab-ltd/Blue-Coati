@@ -3,14 +3,33 @@
   import Modal from '../components/basic/Modal.svelte';
   import Loading from '../components/Loading.svelte';
   import Header from '../components/Header.svelte';
-
+  import deposit from '../stores/manageDeposits';
   import box from '../stores/3box';
+  let amount;
 </script>
 
 <div class="flex flex-col items-center bg-gray-800">
   <Header />
   <Button on:click="{() => box.deleteAllBets()}">Dev: delete bets</Button>
-  
+  <div flex flex-col>
+    <input
+      class="bind:value={amount} border border-pink-500 bg-gray-800 text-pink-500 input !low mb-4 mr-4 w-auto"
+      placeholder="Amount"
+      type="text"
+    />
+    <Button
+      class="text-sm border border-blue-300 text-gray-200 justify-center"
+      on:click="{() => deposit.add(amount)}"
+    >
+      Make Deposit
+    </Button>
+    <Button
+      class="text-sm border border-gray-500 text-gray-200 justify-center"
+      on:click="{() => deposit.withdraw(amount)}"
+    >
+      Withdraw
+    </Button>
+  </div>
   <div class="px-3 md:w-full lg:w-3/4 justify-center">
     {#if $box.status == 'Unavailable' || $box.status == 'Loading'}
       {#await box.staticInit()}
