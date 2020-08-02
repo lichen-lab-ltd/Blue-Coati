@@ -1,11 +1,11 @@
 import {derived} from 'svelte/store';
-import {graphqlStore} from '../utils/graphql';
+import {subscription} from '../utils/graphql/subscription.js';
 
 let lastAddress;
 let endSubscription;
 export default derived(
   wallet,
-  ($wallet, set) => {
+  async ($wallet, set) => {
     if ($wallet.address != lastAddress) {
       if (endSubscription) {
         endSubscription();
@@ -15,21 +15,22 @@ export default derived(
           status: 'Disconnected',
         });
       } else {
-        endSubscription = graphqlStore(
-          `
-      subscription {
-        userDeposit(id: ) {
-          id
-          amount
-        }
-      }
-    `,
-          'userDeposit'
-        ).subscribe((userDeposit) => {
-          set({
-            status: 'Ready',
-            amount: userDeposit.amount,
-          });
+        subscription({
+          query: `
+          subscription userDeposit($userAddress: String) {
+            userDeposit(id: $userAddress) {
+              id
+              amount
+            }
+          }
+        `,
+          variables: {
+            userAddress: $wallet.address.toLowerCase(),
+          },
+        }).subscribe((r) => {
+          console.log('subscribed for :', $wallet.address);
+          console.log(r);
+          set(r);
         });
       }
     }

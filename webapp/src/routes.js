@@ -8,4 +8,8 @@ export default [
     name: 'Index',
     path: '',
   },
+  {
+    name: 'Curate',
+    path: 'curate',
+  },
 ];
