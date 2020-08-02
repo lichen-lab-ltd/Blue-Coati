@@ -10,8 +10,18 @@
     balance,
   } from '../stores/wallet';
   import box from '../stores/3box';
+  import {BigNumber} from '@ethersproject/bignumber';
+  import {userBets} from '../stores/my_bets';
 
-  $: console.log($userDpst)
+  let d_eth = 0;
+  $: if ($userDpst.data) {
+    if ($userDpst.data.userDeposit) {
+      d_eth =
+        BigNumber.from($userDpst.data.userDeposit.amount)
+          .div(BigNumber.from(10).pow(16))
+          .toNumber() / 100;
+    }
+  }
 </script>
 
 <div class="flex flex-col flex-stretch items-center md:w-full lg:w-3/4">
@@ -25,27 +35,14 @@
     </Button>
   {:else if $box.status == 'Ready'}
     <div class="flex flex-col items-center">
-      {#if $userDpst.data}
-        <div>
-          <p class="subheading text-pink-500 justify-center">
-            <!-- TODO: How many bets/currency? -->
-            Bets available: {$userDpst.data.userDeposit ? $userDpst.data.userDeposit.amount : 0}
-            / {$userDpst.data.userDeposit ? $userDpst.data.userDeposit.amount : 0}
-          </p>
-        </div>
-        <p class="text-xs text-gray-200">
-          {$userDpst.data.userDeposit ? $userDpst.data.userDeposit.id : $wallet.address}
+        <p class="text-lg text-pink-500 justify-center">
+          <!-- TODO: discuss price per bet -->
+          Bets made: {$userBets}  / {d_eth * 200}
         </p>
-      {:else}
-        <div>
-          <p class="subheading text-pink-500 justify-center">
-            Bets available: 0
-          </p>
-        </div>
-        <p class="text-xs text-gray-200">
-          {$wallet.address}
+        <p class="text-lg text-yellow-500 justify-center">
+          Total deposit: {d_eth} eth
         </p>
-      {/if}
+      <p class="text-xs text-gray-200">{$wallet.address}</p>
     </div>
   {/if}
 </div>

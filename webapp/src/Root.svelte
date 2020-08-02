@@ -2,6 +2,7 @@
   import {getResponse} from '@curi/svelte';
   const response = getResponse();
 
+  import Link from '@curi/svelte/components/Link.svelte';
   import Nav from './components/Nav.svelte';
 </script>
 
