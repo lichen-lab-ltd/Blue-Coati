@@ -2,8 +2,7 @@
   import {getResponse} from '@curi/svelte';
   const response = getResponse();
 
-  import Link from '@curi/svelte/components/Link.svelte';
-  import Button from './components/basic/Button.svelte';
+  import Nav from './components/Nav.svelte';
 </script>
 
 <nav class="flex items-start bg-gray-800">

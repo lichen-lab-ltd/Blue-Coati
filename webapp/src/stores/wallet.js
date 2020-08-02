@@ -9,7 +9,7 @@ const fallbackUrl = 'http://localhost:8545'; // TODO use env
 
 const {wallet, builtin, chain, transactions, balance} = WalletStores({
   // log: console,
-  // debug: true,
+  debug: true,
   chainConfigs: contractsInfo,
   options: [
     'builtin',
