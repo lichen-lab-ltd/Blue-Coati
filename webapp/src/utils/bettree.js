@@ -7,7 +7,7 @@ const findInTree = function (parent, filter) {
     return parent;
   }
   if (parent.children && parent.children.length > 0) {
-    for (const child of children) {
+    for (const child of parent.children) {
       const found = findInTree(child, filter);
       if (found) {
         return found;
@@ -67,7 +67,12 @@ export function generateBetTree(postId, bets) {
           child,
           (bet, parent) => {
             // console.log({betRoot, bet, parent});
-            if (bet.id && !betIdChecked[bet.id]) {
+            if (
+              bet.id &&
+              !betIdChecked[bet.id] &&
+              parent &&
+              (parent.id === '0' || parent.isValid !== bet.isValid)
+            ) {
               if (checkSigner(bet, postId, parent.id)) {
                 betIdChecked[bet.id] = true;
                 insertInTree(
@@ -114,8 +119,21 @@ export function insertInTree(root, parent, id, isValid, signature, author) {
   return newTree;
 }
 
-export function getFreestParent(root) {
-  return root;
+export function getFreestParent(root, isValid) {
+  let minChild;
+  traverseTree(root, (bet) => {
+    if (bet.isValid !== isValid) {
+      if (!minChild || minChild.children.length > bet.children.length) {
+        minChild = bet;
+      }
+    }
+  });
+  console.log({minChild});
+  if (minChild) {
+    return minChild;
+  } else {
+    return root;
+  }
 }
 
 export function countTree(root, initState, countFunc) {
