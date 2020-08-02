@@ -1,8 +1,8 @@
 import {derived} from 'svelte/store';
-import box from './3box.js';
+import box from './3box';
 import {countTree} from '../utils/bettree';
 
-const mapping = derived(box, ($box, set) => {
+const userBets = derived(box, ($box, set) => {
   if ($box.status == 'Ready') {
     set(map($box));
   }
@@ -25,4 +25,4 @@ const map = function (box) {
   return bets;
 };
 
-export {map, mapping};
+export {map, userBets};

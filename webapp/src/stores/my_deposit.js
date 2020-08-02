@@ -28,8 +28,6 @@ export default derived(
             userAddress: $wallet.address.toLowerCase(),
           },
         }).subscribe((r) => {
-          console.log('subscribed for :', $wallet.address);
-          console.log(r);
           set(r);
         });
       }
