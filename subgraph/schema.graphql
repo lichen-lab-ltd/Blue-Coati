@@ -1,4 +1,5 @@
 type UserDeposit @entity {
   id: ID!
   amount: BigInt!
+  withdrawalTime: BigInt!
 }
