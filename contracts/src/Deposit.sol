@@ -17,10 +17,11 @@ contract Deposit is Proxied {
     function deposit() external payable {
         require(_controller != address(0), "NOT_READY");
         deposits[msg.sender].amount = deposits[msg.sender].amount.add(msg.value);
+        deposits[msg.sender].withdrawalRequestTime = 0;
         emit DepositReceived(msg.sender, msg.value);
     }
 
-    // TODO DAI ERC20 : 
+    // TODO DAI ERC20 :
     /*
     function deposit(uint256 amount) external {
         _deposit(msg.sender, amount);
@@ -81,6 +82,7 @@ contract Deposit is Proxied {
     }
 
     function withdrawDeposit() external {
+        require(deposits[msg.sender].withdrawalRequestTime != 0, "WITHDRAWAL_REQUEST_NOT_STARTED");
         require(
             uint64(block.timestamp) >= (deposits[msg.sender].withdrawalRequestTime + _unlockingTime),
             "NOT READY TO BE UNLOCKED"
