@@ -1,7 +1,7 @@
 import {
   DepositReceived,
   WithdrawalRequested,
-  DepositContract,
+  DepositWithdrew,
 } from "../generated/Deposit/DepositContract";
 import {UserDeposit} from "../generated/schema";
 import {log, BigInt} from "@graphprotocol/graph-ts";
@@ -14,7 +14,7 @@ export function handleDepositReceived(event: DepositReceived): void {
   if (!entity) {
     entity = new UserDeposit(id);
   }
-  entity.amount = event.params.amount;
+  entity.amount = event.params.totalAmount;
   entity.withdrawalTime = BigInt.fromI32(0); // reset withdrawal timer
   entity.save();
 }
@@ -26,5 +26,16 @@ export function handleWithdrawalRequested(event: WithdrawalRequested): void {
     entity = new UserDeposit(id);
   }
   entity.withdrawalTime = event.params.time;
+  entity.save();
+}
+
+export function handleWithdrewDeposit(event: DepositWithdrew): void {
+  let id = event.params.to.toHex();
+  let entity = UserDeposit.load(id);
+  if (!entity) {
+    entity = new UserDeposit(id);
+  }
+  entity.amount = event.params.totalAmount;
+  entity.withdrawalTime = BigInt.fromI32(0);
   entity.save();
 }

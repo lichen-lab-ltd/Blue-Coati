@@ -36,7 +36,9 @@ function transformBox(box) {
 }
 
 store.load = async function () {
-  console.log('loading');
+  if (box.status == 'Ready') {
+    return;
+  }
   box.status = 'Loading';
   store.set(box);
 

@@ -1,6 +1,6 @@
 import {derived} from 'svelte/store';
 import {subscription} from '../utils/graphql/subscription.js';
-import {wallet, builtin, chain, transactions, balance} from './wallet';
+import {wallet} from './wallet';
 import box from './3box';
 import {BigNumber} from '@ethersproject/bignumber';
 
@@ -33,6 +33,7 @@ userDeposit.store = derived(
             userAddress: $wallet.address.toLowerCase(),
           },
         }).subscribe((r) => {
+          console.log('subcription update: ', r);
           set(r);
         });
       }
@@ -44,25 +45,41 @@ userDeposit.store = derived(
 );
 
 userDeposit.add = async function () {
-  if (box.status != 'Ready') {
-    await box.load();
+  console.log('adding deposit');
+  await wallet.connect('builtin'); // TODO choice
+  if (!wallet.address) {
+    await wallet.unlock(); // TOOO catch ?
   }
   try {
     // 0.05 ETH per deposit
     let amountEth = BigNumber.from(5).mul(BigNumber.from(10).pow(16));
-    console.log(amountEth);
+    console.log('amount eth', amountEth);
     await wallet.contracts.Deposit.deposit({value: amountEth});
+    await box.load();
   } catch (e) {
     console.log(e);
   }
 };
 userDeposit.withdrawRequest = async function () {
-  if (box.status != 'Ready') {
-    await box.load();
+  await wallet.connect('builtin'); // TODO choice
+  if (!wallet.address) {
+    await wallet.unlock(); // TOOO catch ?
   }
   try {
-    // get everything back
     await wallet.contracts.Deposit.withdrawRequest();
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+userDeposit.withdrawDeposit = async function () {
+  console.log('withdrawing');
+  await wallet.connect('builtin'); // TODO choice
+  if (!wallet.address) {
+    await wallet.unlock(); // TOOO catch ?
+  }
+  try {
+    await wallet.contracts.Deposit.withdrawDeposit();
   } catch (e) {
     console.log(e);
   }
