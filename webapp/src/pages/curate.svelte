@@ -3,7 +3,6 @@
   import Modal from '../components/basic/Modal.svelte';
   import Loading from '../components/Loading.svelte';
   import Header from '../components/Header.svelte';
-  import deposits from '../stores/deposits';
   import deposit from '../stores/manageDeposits';
   import box from '../stores/3box';
   import {userBets} from '../stores/my_bets';

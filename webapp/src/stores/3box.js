@@ -8,6 +8,7 @@ import {generateBetTree, getFreestParent, insertInTree} from '../utils/bettree';
 import {keccak256} from '@ethersproject/solidity';
 import {BigNumber} from '@ethersproject/bignumber';
 
+let init_data = {init: false, posts: [], bets: [], betTrees: {}};
 let store;
 let box = {
   status: 'Unavailable',
@@ -154,7 +155,9 @@ store.deleteAllBets = async function () {
 };
 
 store.staticInit = async function () {
-  let init_data = {posts: [], bets: [], betTrees: {}};
+  if (init_data.init) {
+    return init_data;
+  }
   init_data.posts = await Box.getThreadByAddress(
     '/orbitdb/zdpuAqAGkAzxibXccbKHKev5pKZcPKsaFAQD6upFofjF658Vt/3box.thread.blue-coati-dev.other-coati'
   );
@@ -163,6 +166,7 @@ store.staticInit = async function () {
   );
   transformBox(init_data);
   init_data.mapping = map(init_data.betTrees);
+  init_data.init = true;
   console.log('init: ', init_data);
   return init_data;
 };

@@ -14,10 +14,12 @@
   import {userBets} from '../stores/my_bets';
 
   let d_eth = 0;
-  $: if ($userDpst.data) {
-    if ($userDpst.data.userDeposit) {
+  let userDeposit = userDpst.store;
+  $: if ($userDeposit.data) {
+    console.log($userDeposit)
+    if ($userDeposit.data.userDeposit) {
       d_eth =
-        BigNumber.from($userDpst.data.userDeposit.amount)
+        BigNumber.from($userDeposit.data.userDeposit.amount)
           .div(BigNumber.from(10).pow(16))
           .toNumber() / 100;
     }

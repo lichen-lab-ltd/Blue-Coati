@@ -1,9 +1,13 @@
 import {derived} from 'svelte/store';
 import {subscription} from '../utils/graphql/subscription.js';
+import {wallet, builtin, chain, transactions, balance} from './wallet';
+import box from './3box';
+import {BigNumber} from '@ethersproject/bignumber';
 
 let lastAddress;
 let endSubscription;
-export default derived(
+let userDeposit = {};
+userDeposit.store = derived(
   wallet,
   async ($wallet, set) => {
     if ($wallet.address != lastAddress) {
@@ -21,6 +25,7 @@ export default derived(
             userDeposit(id: $userAddress) {
               id
               amount
+              withdrawalTime
             }
           }
         `,
@@ -37,3 +42,30 @@ export default derived(
     status: 'Disconnected',
   }
 );
+
+userDeposit.add = async function () {
+  if (box.status != 'Ready') {
+    await box.load();
+  }
+  try {
+    // 0.05 ETH per deposit
+    let amountEth = BigNumber.from(5).mul(BigNumber.from(10).pow(16));
+    console.log(amountEth);
+    await wallet.contracts.Deposit.deposit({value: amountEth});
+  } catch (e) {
+    console.log(e);
+  }
+};
+userDeposit.withdrawRequest = async function () {
+  if (box.status != 'Ready') {
+    await box.load();
+  }
+  try {
+    // get everything back
+    await wallet.contracts.Deposit.withdrawRequest();
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export default userDeposit;
