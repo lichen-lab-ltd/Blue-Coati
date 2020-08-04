@@ -65,6 +65,7 @@ store.load = async function () {
 
     box.box = _box;
     box.spaceDID = _space.DID;
+    box.profile = await _box.public.all();
     box.postsThread = _posts;
     box.betsThread = _bets;
     box.posts = await _posts.getPosts();
