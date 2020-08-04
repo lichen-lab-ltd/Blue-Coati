@@ -27,7 +27,7 @@
 </script>
 
 <div class="flex flex-col flex-stretch items-center md:w-full lg:w-3/4">
-  <p class="text-5xl text-white justify-center">🔵 Blue Coati</p>
+  <p class="text-5xl text-white justify-center mb-5">🔵 Blue Coati</p>
   {#if $box.status != 'Ready'}
     <Button
       class="mt-5 w-48 text-sm text-gray-200 justify-center"
@@ -38,7 +38,7 @@
   {:else if $box.status == 'Ready'}
     <div class="flex flex-row items-center justify-center">
     <div class="items-center justify-center" >
-      <Identity url={$box.profile.image[0].contentUrl["/"]} />
+      <Identity profile={$box.profile} />
       <p class="text-xs text-gray-200 text-center">{$box.profile.name}</p>
     </div>
     <div class="m-2 flex flex-col items-start justify-evenly">
