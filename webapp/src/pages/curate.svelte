@@ -3,62 +3,52 @@
   import Modal from '../components/basic/Modal.svelte';
   import Loading from '../components/Loading.svelte';
   import Header from '../components/Header.svelte';
-  import deposit from '../stores/my_deposit';
+  import userDeposit from '../stores/my_deposit';
+  import {wallet} from '../stores/wallet';
+
   import box from '../stores/3box';
   import {userBets} from '../stores/my_bets';
-  import userDpst from '../stores/my_deposit';
   import {time} from '../stores/time'
-  let wTime;
-  function manageDeposit(_isAdd) {
-    _isAdd ? deposit.add() : isUnlocked ? deposit.withdrawDeposit() : deposit.withdrawRequest();
-  }
-  let userDeposit = userDpst.store;
-  $: if ($userDeposit.data) {
-    if ($userDeposit.data.userDeposit){
-      console.log($userDeposit.data.userDeposit)
-      wTime = $userDeposit.data.userDeposit.withdrawalTime
-    } else {wTime = 0}
-  } else {wTime = 0}
-  const LOCKPERIOD = 30 // deposit
-  $: isUnlocked = ($time >= (parseInt(wTime) + 30))
+  let depositStore = userDeposit.store;
+  let status = userDeposit.status;
 </script>
 
 <div class="flex flex-col items-center bg-gray-800">
   <Header />
-  <Button on:click="{() => box.deleteAllBets()}">Dev: delete bets</Button>
-  <div flex flex-col>
-    {#if wTime == 0}
-      <Button
-        class="text-sm border border-blue-300 text-gray-200 justify-center"
-        on:click={() => deposit.add()}
-      >
-        Make Deposit
-      </Button>
-    {/if}
-    {#if $box.status == 'Ready' }
-      {#if wTime == 0}
-        <div
-          class="button text-sm border border-gray-500 text-gray-200 justify-center"
-          on:click={() => deposit.withdrawRequest()}
+  {#if $wallet.address }
+  <div>
+    {#if $status.withdrawStatus == 'NotRequested' && $status.hasDeposit}
+      <div flex flex-col>
+        <Button
+          class="text-sm border border-blue-300 text-gray-200 justify-center"
+          on:click={() => userDeposit.add()}
+        >
+          Make Deposit
+        </Button>
+        <Button
+          class="text-sm border border-gray-500 text-gray-200 justify-center"
+          on:click={() => userDeposit.withdrawRequest()}
         >
           Request Withdraw
-        </div>
-      {:else if isUnlocked}
-        <div
-          class="button text-sm border border-gray-500 text-gray-200 justify-center"
-          on:click={() => deposit.withdrawDeposit()}
+        </Button>
+      </div>
+    {:else if $status.withdrawStatus == 'Unlocked'}
+      <Button
+          class="text-sm border border-gray-500 text-gray-200 justify-center"
+          on:click={() => userDeposit.withdrawDeposit()}
         >
           Withdraw Deposit
-        </div>
-      {:else if !isUnlocked}
-        <div
-          class="button text-sm border border-gray-500 text-gray-200 justify-center"
-        >
-          Unlocking Deposit
-        </div>
-      {/if}
+      </Button>
+    {:else if $status.withdrawStatus == 'Unlocking'}
+      <Button
+        class="text-sm disabled border border-gray-500 text-gray-200 justify-center"
+      >
+        Unlocking Deposit
+      </Button>
     {/if}
   </div>
+  {/if}
+
   <div class="px-3 md:w-full lg:w-3/4 justify-center">
     {#if $box.status == 'Unavailable' || $box.status == 'Loading'}
       {#await box.staticInit()}
