@@ -5,6 +5,10 @@
     let date = new Date(_time);
     return date.toLocaleString();
   };
+  import userDeposit from '../stores/my_deposit';
+  let status = userDeposit.status
+
+  $: disabled = ($status.withdrawStatus == 'Unlocking')
 </script>
 
 <section class="~neutral m-2 card !normal content bg-gray-700">
@@ -14,13 +18,13 @@
   <div class="px-6 py-2 flex flex-row">
     <button
       on:click="{() => box.bet(true, post.postId)}"
-      class="badge ~positive m-1"
+      class={disabled ? 'opacity-50 cursor-not-allowed badge ~neutral m-1' : 'badge ~positive m-1'}
     >
       {betsMap[post.postId] ? betsMap[post.postId].isValidCount : 0} 👍
     </button>
     <button
       on:click="{() => box.bet(false, post.postId)}"
-      class="badge ~critical m-1"
+      class={disabled ? 'opacity-50 cursor-not-allowed badge ~neutral m-1' : 'badge ~critical m-1'}
     >
       {betsMap[post.postId] ? betsMap[post.postId].isInvalidCount : 0} 👎
     </button>

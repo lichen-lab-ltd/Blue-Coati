@@ -11,34 +11,35 @@
   import {time} from '../stores/time'
   let depositStore = userDeposit.store;
   let status = userDeposit.status;
+  $: console.log($status)
 </script>
 
 <div class="flex flex-col items-center bg-gray-800">
   <Header />
   {#if $wallet.address }
   <div>
-    {#if $status.withdrawStatus == 'NotRequested' && $status.hasDeposit}
-      <div flex flex-col>
+    {#if $status.withdrawStatus && $status.withdrawStatus != 'Unlocking' && $status.hasDeposit}
+      <Button
+        class="text-sm border border-blue-300 text-gray-200 justify-center"
+        on:click={() => userDeposit.add()}
+      >
+        Make Deposit
+      </Button>
+      {#if $status.withdrawStatus == 'Unlocked'}
         <Button
-          class="text-sm border border-blue-300 text-gray-200 justify-center"
-          on:click={() => userDeposit.add()}
-        >
-          Make Deposit
+            class="text-sm border border-gray-500 text-gray-200 justify-center"
+            on:click={() => userDeposit.withdrawDeposit()}
+          >
+            Withdraw Deposit
         </Button>
+      {:else if $status.withdrawStatus == 'NotRequested'}
         <Button
           class="text-sm border border-gray-500 text-gray-200 justify-center"
           on:click={() => userDeposit.withdrawRequest()}
         >
           Request Withdraw
         </Button>
-      </div>
-    {:else if $status.withdrawStatus == 'Unlocked'}
-      <Button
-          class="text-sm border border-gray-500 text-gray-200 justify-center"
-          on:click={() => userDeposit.withdrawDeposit()}
-        >
-          Withdraw Deposit
-      </Button>
+      {/if}
     {:else if $status.withdrawStatus == 'Unlocking'}
       <Button
         class="text-sm disabled border border-gray-500 text-gray-200 justify-center"

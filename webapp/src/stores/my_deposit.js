@@ -47,7 +47,7 @@ const Store = derived(
 );
 
 const status = derived([Store, time], ([$Store, $time], set) => {
-  let s = {hasDeposit: false, withdrawStatus: ''};
+  let s = {hasDeposit: false, withdrawStatus: null};
   if ($Store.data) {
     if ($Store.data.userDeposit) {
       s.hasDeposit = true;
