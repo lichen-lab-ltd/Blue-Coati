@@ -3,6 +3,7 @@
   import Modal from '../components/basic/Modal.svelte';
   import Loading from '../components/Loading.svelte';
   import Header from '../components/Header.svelte';
+  import Bet from '../components/Bet.svelte';
   import deposits from '../stores/deposits';
   import deposit from '../stores/manageDeposits';
   import box from '../stores/3box';
@@ -40,7 +41,7 @@
         </div>
       {:then value}
         {#each value.bets.reverse() as bet}
-          <p>{JSON.stringify(bet)}</p>
+          <Bet {bet} />
         {/each}
       {:catch error}
         <p>Error in loading inital bets, please sign in</p>
@@ -49,7 +50,9 @@
     {:else if $box.status == 'Ready'}
       <div>
         {#each $box.bets.reverse() as bet}
-          <p>{JSON.stringify(bet)}</p>
+          {#if bet.author == $box.spaceDID}
+            <Bet {bet} />
+          {/if}
         {/each}
       </div>
     {:else if $box.status == 'Error'}

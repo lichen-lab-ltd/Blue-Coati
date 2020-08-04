@@ -23,7 +23,7 @@
           .toNumber() / 100;
     }
   }
-  $: console.log($box)
+  $: console.log($userBets)
 </script>
 
 <div class="flex flex-col flex-stretch items-center md:w-full lg:w-3/4">
@@ -44,7 +44,7 @@
     <div class="m-2 flex flex-col items-start justify-evenly">
       <p class="text-lg text-pink-500">
         <!-- TODO: discuss price per bet -->
-        Bets made: {$userBets}  / {d_eth * 200}
+        Bets made: {$userBets.length}  / {d_eth * 200}
       </p>
       <p class="text-lg text-blue-700">
         Total deposit: {d_eth} eth
