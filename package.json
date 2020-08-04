@@ -44,9 +44,9 @@
 
     "// contracts : deploy smart contracts on local ethereum node": "",
     "contracts:clean": "rimraf contracts/deployments/localhost_1337 && rimraf webapp/src/contracts/development.json",
-    "contracts:dev": "npm --prefix contracts run local:dev -- --export ../webapp/src/contracts/development.json",
+    "contracts:dev": "dotenv -e .env -e contracts/.env -- npm --prefix contracts run local:dev -- --export ../webapp/src/contracts/development.json",
     "shell:contracts:dev": "newsh \"npm run contracts:dev\"",
-    "seed": "dotenv -- npm --prefix contracts run local:seed",
+    "seed": "dotenv -e .env -e contracts/.env -- npm --prefix contracts run local:seed",
 
     "// webapp : run local webapp in dev mode": "",
     "webapp": "dotenv -- npm --prefix webapp run dev",
@@ -60,7 +60,7 @@
     "// STAGING : deploy on staging": "",
     "staging:subgraph:deploy": "dotenv -e .env.staging -e .env -- npm --prefix subgraph run kovan:deploy ../contracts/deployments/kovan",
     "staging:webapp:build": "dotenv -e .env.staging -e .env -- npm --prefix webapp run build",
-    "staging:seed": "dotenv -e .env.staging -e .env -- npm --prefix contracts run kovan:run scripts/seed.js",
+    "staging:seed": "dotenv -e .env.staging -e .env -e contracts/.env -- npm --prefix contracts run kovan:run scripts/seed.js",
 
     "// SERVE Webapp ": "",
     "webapp:build": "dotenv -- npm --prefix webapp run build",
