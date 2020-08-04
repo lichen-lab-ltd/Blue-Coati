@@ -24,4 +24,6 @@ dataSources:
           handler: handleDepositReceived
         - event: WithdrawalRequested(indexed address,uint64)
           handler: handleWithdrawalRequested
+        - event: DepositWithdrew(indexed address,uint256)
+          handler: handleWithdrewDeposit
       file: ./src/mapping.ts

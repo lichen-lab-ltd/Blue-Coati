@@ -9,8 +9,8 @@ import "./Interfaces/DAIERC20.sol";
 contract Deposit is Proxied {
     using SafeMath for uint256;
 
-    event DepositReceived(address indexed from, uint256 amount);
-    event DepositWithdrew(address indexed to, uint256 amount);
+    event DepositReceived(address indexed from, uint256 totalAmount);
+    event DepositWithdrew(address indexed to, uint256 totalAmount);
     event WithdrawalRequested(address indexed user, uint64 time);
     event Transfer(address indexed from, address indexed to, uint256 amount);
 
@@ -18,7 +18,7 @@ contract Deposit is Proxied {
         require(_controller != address(0), "NOT_READY");
         deposits[msg.sender].amount = deposits[msg.sender].amount.add(msg.value);
         deposits[msg.sender].withdrawalRequestTime = 0;
-        emit DepositReceived(msg.sender, msg.value);
+        emit DepositReceived(msg.sender, deposits[msg.sender].amount);
     }
 
     // TODO DAI ERC20 :
@@ -93,7 +93,7 @@ contract Deposit is Proxied {
         deposits[msg.sender].amount = deposits[msg.sender].amount.sub(amount);
         deposits[msg.sender].withdrawalRequestTime = 0;
         msg.sender.transfer(amount);
-        emit DepositWithdrew(msg.sender, amount);
+        emit DepositWithdrew(msg.sender, deposits[msg.sender].amount);
     }
 
     // ////////////////// CONSTRUCTOR /////////////////////////////
