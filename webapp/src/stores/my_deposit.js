@@ -1,9 +1,15 @@
 import {derived} from 'svelte/store';
 import {subscription} from '../utils/graphql/subscription.js';
-
+import {wallet} from './wallet';
+import {time} from './time';
+import box from './3box';
+import {BigNumber} from '@ethersproject/bignumber';
+const LOCKPERIOD = 30; // deposit
 let lastAddress;
 let endSubscription;
-export default derived(
+let userDeposit = {};
+
+const Store = derived(
   wallet,
   async ($wallet, set) => {
     if ($wallet.address != lastAddress) {
@@ -21,6 +27,7 @@ export default derived(
             userDeposit(id: $userAddress) {
               id
               amount
+              withdrawalTime
             }
           }
         `,
@@ -28,6 +35,7 @@ export default derived(
             userAddress: $wallet.address.toLowerCase(),
           },
         }).subscribe((r) => {
+          console.log('subcription update: ', r);
           set(r);
         });
       }
@@ -37,3 +45,71 @@ export default derived(
     status: 'Disconnected',
   }
 );
+
+const status = derived([Store, time], ([$Store, $time], set) => {
+  let s = {hasDeposit: false, withdrawStatus: null};
+  if ($Store.data) {
+    if ($Store.data.userDeposit) {
+      s.hasDeposit = true;
+      if ($Store.data.userDeposit.withdrawalTime == 0) {
+        s.withdrawStatus = 'NotRequested';
+      } else {
+        if (
+          $time >=
+          parseInt($Store.data.userDeposit.withdrawalTime) + LOCKPERIOD
+        ) {
+          s.withdrawStatus = 'Unlocked';
+        } else {
+          s.withdrawStatus = 'Unlocking';
+        }
+      }
+    }
+  }
+  set(s);
+});
+
+userDeposit.store = Store;
+userDeposit.status = status;
+
+userDeposit.add = async function () {
+  console.log('adding deposit');
+  await wallet.connect('builtin'); // TODO choice
+  if (!wallet.address) {
+    await wallet.unlock(); // TOOO catch ?
+  }
+  try {
+    // 0.05 ETH per deposit
+    let amountEth = BigNumber.from(5).mul(BigNumber.from(10).pow(16));
+    console.log('amount eth', amountEth);
+    await wallet.contracts.Deposit.deposit({value: amountEth});
+    await box.load();
+  } catch (e) {
+    console.log(e);
+  }
+};
+userDeposit.withdrawRequest = async function () {
+  await wallet.connect('builtin'); // TODO choice
+  if (!wallet.address) {
+    await wallet.unlock(); // TOOO catch ?
+  }
+  try {
+    await wallet.contracts.Deposit.withdrawRequest();
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+userDeposit.withdrawDeposit = async function () {
+  console.log('withdrawing');
+  await wallet.connect('builtin'); // TODO choice
+  if (!wallet.address) {
+    await wallet.unlock(); // TOOO catch ?
+  }
+  try {
+    await wallet.contracts.Deposit.withdrawDeposit();
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export default userDeposit;

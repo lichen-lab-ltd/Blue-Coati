@@ -2,7 +2,7 @@
   import Button from '../components/basic/Button.svelte';
   import Identity from '../components/Identity.svelte';
   import Box from '../3box.min.js';
-  import userDpst from '../stores/my_deposit.js';
+  import userDpst from '../stores/my_deposit';
   import {
     wallet,
     builtin,
@@ -14,16 +14,16 @@
   import {BigNumber} from '@ethersproject/bignumber';
   import {userBets} from '../stores/my_bets';
 
-  let d_eth = 0;
-  $: if ($userDpst.data) {
-    if ($userDpst.data.userDeposit) {
+  let d_eth;
+  let userDeposit = userDpst.store;
+  $: if ($userDeposit.data) {
+    if ($userDeposit.data.userDeposit) {
       d_eth =
-        BigNumber.from($userDpst.data.userDeposit.amount)
+        BigNumber.from($userDeposit.data.userDeposit.amount)
           .div(BigNumber.from(10).pow(16))
           .toNumber() / 100;
-    }
-  }
-  $: console.log($userBets)
+    } else {d_eth = 0}
+  } else {d_eth = 0}
 </script>
 
 <div class="flex flex-col flex-stretch items-center md:w-full lg:w-3/4">
