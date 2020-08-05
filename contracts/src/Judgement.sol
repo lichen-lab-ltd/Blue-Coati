@@ -6,10 +6,13 @@ import "./Deposit.sol";
 import "./Libraries/SigUtil.sol";
 
 contract Judgement is Proxied {
+    event JudgementCasted(bytes32 indexed documentId, bool accepted);
+
     function castJudgement(bytes32 documentId, bool accepted) external {
         require(msg.sender == _judge);
         require(_documents[documentId].judgementTime == 0, "ALREADY_DECIDED");
         _documents[documentId] = Document(uint64(block.timestamp), accepted);
+        emit JudgementCasted(documentId, accepted);
     }
 
     function appeal(bytes32 documentId, bool accepted) external {
@@ -19,6 +22,7 @@ contract Judgement is Proxied {
         // bool currentResult = _documents[documentId].result;
         // require(currentResult != accepted, "APPEAL_IN_FAVOR");
         // _documents[documentId].result = accepted;
+        // emit JudgementCasted(documentId, accepted);
     }
 
     function recordLosingBet(

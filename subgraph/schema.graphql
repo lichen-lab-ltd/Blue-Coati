@@ -3,3 +3,9 @@ type UserDeposit @entity {
   amount: BigInt!
   withdrawalTime: BigInt!
 }
+
+type Judgement @entity {
+  id: ID!
+  accepted: Boolean!
+  timestamp: BigInt!
+}

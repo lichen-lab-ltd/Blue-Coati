@@ -27,3 +27,23 @@ dataSources:
         - event: DepositWithdrew(indexed address,uint256)
           handler: handleWithdrewDeposit
       file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: Judgement
+    network: mainnet
+    source:
+      address: "{{contracts.Judgement.address}}"
+      abi: JudgementContract
+      startBlock: {{contracts.Judgement.receipt.blockNumber}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - Judgement
+      abis:
+        - name: JudgementContract
+          file: ./abis/Judgement.json
+      eventHandlers:
+        - event: JudgementCasted(indexed bytes32,bool)
+          handler: handleJudgementCasted
+      file: ./src/mapping.ts
