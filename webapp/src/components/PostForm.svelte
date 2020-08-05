@@ -10,5 +10,5 @@
     placeholder="What do you want to share?"
     bind:value="{newPost}"
   ></textarea>
-  <Button class="~urge mx-1" on:click="{() => box.addPost(newPost)}">✒️</Button>
+  <Button class="~urge mx-1" on:click="{() => {box.addPost(newPost); newPost = ''}}">✒️</Button>
 </div>

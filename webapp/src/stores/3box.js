@@ -144,6 +144,17 @@ store.bet = async function (_isValid, _postId) {
   }
 };
 
+store.deletePost = async function (_postId) {
+  if (box.status != 'Ready') {
+    await store.load();
+  }
+  try {
+    await box.postsThread.deletePost(_postId);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 store.deleteAllBets = async function () {
   if (box.status != 'Ready') {
     await store.load();

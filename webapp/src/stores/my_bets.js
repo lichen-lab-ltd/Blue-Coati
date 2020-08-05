@@ -22,7 +22,6 @@ const map = function (box) {
     };
     let newBets = countTree(box.betTrees[postId], initState, countFunc).count;
     bets = [...bets, ...newBets];
-    console.log('bets: ', bets);
   }
   return bets;
 };
