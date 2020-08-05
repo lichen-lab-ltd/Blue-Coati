@@ -6,8 +6,10 @@ import "./Judgement.sol";
 contract JudgementWithChain is Judgement {
     struct Pair {
         uint256 losingBetId;
+        uint64 losingTimestamp;
         bytes losingsig;
         uint256 winningBetId;
+        uint64 winningTimestamp;
         bytes winningSig;
         uint256 parentBetId;
     }
@@ -32,8 +34,12 @@ contract JudgementWithChain is Judgement {
         _betsCounted[documentId][pair.losingBetId] = true;
 
         address expectedLoser = address(uint160(pair.losingBetId >> 96));
-        address loser = SigUtil.recover(
-            keccak256(abi.encode(documentId, pair.losingBetId, pair.winningBetId, !result)),
+        address loser = _recover(
+            documentId,
+            pair.losingBetId,
+            pair.winningBetId,
+            !result,
+            pair.losingTimestamp,
             pair.losingsig
         );
         require(expectedLoser == loser, "INVALID_LOSER_SIGNATURE");
@@ -42,8 +48,12 @@ contract JudgementWithChain is Judgement {
             if (_betsCounted[documentId][pair.winningBetId] == false) {
                 _betsCounted[documentId][pair.winningBetId] = true; // Can get reward only once
                 address expectedWinner = address(uint160(pair.winningBetId >> 96));
-                address winner = SigUtil.recover(
-                    keccak256(abi.encode(documentId, pair.winningBetId, pair.parentBetId, result)),
+                address winner = _recover(
+                    documentId,
+                    pair.winningBetId,
+                    pair.parentBetId,
+                    result,
+                    pair.winningTimestamp,
                     pair.winningSig
                 );
                 require(expectedWinner == winner, "INVALID_WINNER_SIGNATURE");
