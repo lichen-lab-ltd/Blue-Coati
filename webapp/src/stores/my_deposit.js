@@ -35,7 +35,6 @@ const Store = derived(
             userAddress: $wallet.address.toLowerCase(),
           },
         }).subscribe((r) => {
-          console.log('subcription update: ', r);
           set(r);
         });
       }

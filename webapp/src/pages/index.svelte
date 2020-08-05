@@ -13,7 +13,7 @@
 
   let addingPost = false;
   let newPost;
-  $: console.log($status.withdrawStatus);
+  $: p =  [...$box.posts];
 </script>
 
 <div class="flex flex-col items-center bg-gray-800">
@@ -30,7 +30,7 @@
         {#if ($status.withdrawStatus != 'Unlocking')}
           <PostForm />
         {/if}
-        {#each value.posts.reverse() as post}
+        {#each value.posts as post}
           <Post {post} betsMap="{value.mapping}"/>
         {/each}
       {:catch error}
@@ -42,7 +42,7 @@
         {#if ($status.withdrawStatus != 'Unlocking')}
           <PostForm />
         {/if}
-        {#each $box.posts.reverse() as post}
+        {#each p.reverse() as post}
           <Post {post} betsMap="{$mapping}"/>
         {/each}
       </div>

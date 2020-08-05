@@ -3,15 +3,15 @@
   import Modal from '../components/basic/Modal.svelte';
   import Loading from '../components/Loading.svelte';
   import Header from '../components/Header.svelte';
+  import Bet from '../components/Bet.svelte';
+  import deposits from '../stores/deposits';
   import userDeposit from '../stores/my_deposit';
   import {wallet} from '../stores/wallet';
-
   import box from '../stores/3box';
   import {userBets} from '../stores/my_bets';
   import {time} from '../stores/time'
   let depositStore = userDeposit.store;
   let status = userDeposit.status;
-  $: console.log($status)
 </script>
 
 <div class="flex flex-col items-center bg-gray-800">
@@ -58,7 +58,7 @@
         </div>
       {:then value}
         {#each value.bets.reverse() as bet}
-          <p>{JSON.stringify(bet)}</p>
+          <Bet {bet} />
         {/each}
       {:catch error}
         <p>Error in loading inital bets, please sign in</p>
@@ -67,7 +67,9 @@
     {:else if $box.status == 'Ready'}
       <div>
         {#each $box.bets.reverse() as bet}
-          <p>{JSON.stringify(bet)}</p>
+          {#if bet.author == $box.spaceDID}
+            <Bet {bet} />
+          {/if}
         {/each}
       </div>
     {:else if $box.status == 'Error'}

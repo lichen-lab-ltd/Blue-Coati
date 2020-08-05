@@ -9,18 +9,20 @@ const userBets = derived(box, ($box, set) => {
 });
 
 const map = function (box) {
-  let bets = 0;
+  let bets = [];
   let user = box.spaceDID;
   for (const postId of Object.keys(box.betTrees)) {
-    let initState = {user, count: 0};
+    let initState = {user, count: []};
     const countFunc = (bet, parent) => {
       if (parent) {
         if (bet.author == initState.user) {
-          initState.count++;
+          initState.count.push({postId: postId, bet});
         }
       }
     };
-    bets += countTree(box.betTrees[postId], initState, countFunc).count;
+    let newBets = countTree(box.betTrees[postId], initState, countFunc).count;
+    bets = [...bets, ...newBets];
+    console.log('bets: ', bets);
   }
   return bets;
 };
