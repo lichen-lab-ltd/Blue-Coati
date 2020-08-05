@@ -1,10 +1,8 @@
 pragma solidity 0.6.5;
 
 library SigUtil {
-    function recover(bytes32 hash, bytes memory sig) internal pure returns (address) {
-        if (sig.length != 65) {
-            return (address(0));
-        }
+    function recover(bytes32 hash, bytes memory sig) internal pure returns (address recovered) {
+        require(sig.length == 65, "SIGNATURE_INVALID_LENGTH");
 
         bytes32 r;
         bytes32 s;
@@ -19,11 +17,13 @@ library SigUtil {
         if (v < 27) {
             v += 27;
         }
+        require(v == 27 || v == 28, "SIGNATURE_INVALID_V");
 
-        if (v != 27 && v != 28) {
-            return (address(0));
-        } else {
-            return ecrecover(hash, v, r, s);
-        }
+        recovered = ecrecover(hash, v, r, s);
+        require(recovered != address(0), "SIGNATURE_ZERO_ADDRESS");
+    }
+
+    function eth_sign_prefix(bytes32 hash) internal pure returns (bytes memory) {
+        return abi.encodePacked("\x19Ethereum Signed Message:\n32", hash);
     }
 }

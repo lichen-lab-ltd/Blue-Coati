@@ -42,10 +42,11 @@ const eip712Struct = {
       {name: 'parentId', type: 'uint256'},
       // {name: 'isValid', type: 'bool'},
       {name: 'isValid', type: 'string'}, // TODO fix Metamask
+      {name: 'timestamp', type: 'uint64'},
     ],
   },
   domain: {
-    name: 'Judgment',
+    name: 'Judgement',
     // chainId,
   },
   primaryType: 'Bet',

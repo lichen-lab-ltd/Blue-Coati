@@ -119,6 +119,7 @@ store.bet = async function (_isValid, _postId) {
     id,
     parentId: parent.id || '0',
     isValid: _isValid ? 'true' : 'false',
+    timestamp: Math.floor(Date.now() / 1000),
   };
   const signature = await wallet.provider.send('eth_signTypedData_v4', [
     wallet.address,
