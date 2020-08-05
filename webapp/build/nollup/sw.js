@@ -1,4 +1,5 @@
 self.skipWaiting(); // force removal of old instantly
+console.log('sw.js');
 
 const cacheWhitelist = [];
 
@@ -15,9 +16,11 @@ const cacheWhitelist = [];
 // });
 
 self.addEventListener('activate', function (event) {
+  console.log('sw.js activated');
   // delete old caches when updating if needed
   event.waitUntil(
     caches.keys().then(function (cacheNames) {
+      console.log('deleting caches :', cacheNames);
       return Promise.all(
         cacheNames.map(function (cacheName) {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
