@@ -1,14 +1,15 @@
 <script>
-  export let post, betsMap;
-  import box from '../stores/3box.js';
+  export let post, betsMap, betPeriod;
+  import box from '../stores/3box';
+  import {time} from '../stores/time';
   const timeToDateTime = (_time) => {
     let date = new Date(_time);
     return date.toLocaleString();
   };
   import userDeposit from '../stores/my_deposit';
-  let status = userDeposit.status
+  let status = userDeposit.status;
 
-  $: disabled = ($status.withdrawStatus == 'Unlocking')
+  $: disabled = ($status.withdrawStatus == 'Unlocking' || $time > (post.timestamp + betPeriod))
 </script>
 
 <section class="~neutral m-2 card !normal content bg-gray-700">

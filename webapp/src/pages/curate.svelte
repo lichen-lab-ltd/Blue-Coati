@@ -4,14 +4,21 @@
   import Loading from '../components/Loading.svelte';
   import Header from '../components/Header.svelte';
   import Bet from '../components/Bet.svelte';
+  import Post from '../components/Post.svelte';
+
   import deposits from '../stores/deposits';
   import userDeposit from '../stores/my_deposit';
   import {wallet} from '../stores/wallet';
   import box from '../stores/3box';
   import {userBets} from '../stores/my_bets';
   import {time} from '../stores/time'
+  import {mapping} from '../stores/postBetsMapping.js';
+
   let depositStore = userDeposit.store;
   let status = userDeposit.status;
+  $: p = [...$box.posts];
+  const BETPERIOD = 30; // deposit
+
 </script>
 
 <div class="flex flex-col items-center bg-gray-800">
@@ -50,31 +57,38 @@
   </div>
   {/if}
 
-  <div class="px-3 md:w-full lg:w-3/4 justify-center">
-    {#if $box.status == 'Unavailable' || $box.status == 'Loading'}
-      {#await box.staticInit()}
-        <div class="flex h-screen items-center justify-center">
-          <Loading />
+  <div class="grid grid-cols-2 gap-2">
+    <!-- Posts to curate -->
+    <div class="px-1 justify-center">
+      {#if $box.status == 'Ready'}
+      <div class="m-2 text-3xl text-gray-500 underline text-start">All Posts:</div>
+        <div>
+          {#each p.reverse() as post}
+            {#if $time < (post.timestamp + BETPERIOD)}
+              <Post {post} betsMap={$mapping} {BETPERIOD}/>
+            {/if }
+          {/each}
         </div>
-      {:then value}
-        {#each value.bets.reverse() as bet}
-          <Bet {bet} />
-        {/each}
-      {:catch error}
-        <p>Error in loading inital bets, please sign in</p>
-        <p>{error}</p>
-      {/await}
-    {:else if $box.status == 'Ready'}
-      <div>
-        {#each $box.bets.reverse() as bet}
-          {#if bet.author == $box.spaceDID}
-            <Bet {bet} />
-          {/if}
-        {/each}
-      </div>
-    {:else if $box.status == 'Error'}
-      <div>Error: {$box.msg}</div>
-    {/if}
+      {:else if $box.status == 'Error'}
+        <div>Error: {$box.msg}</div>
+      {/if}
+    </div>
+
+    <!-- Bets made -->
+    <div class="px-1 justify-center">
+      {#if $box.status == 'Ready'}
+      <div class="m-2 text-3xl text-gray-500 underline text-start">My bets:</div>
+        <div>
+          {#each $box.bets.reverse() as bet}
+            {#if bet.author == $box.spaceDID}
+              <Bet {bet} />
+            {/if}
+          {/each}
+        </div>
+      {:else if $box.status == 'Error'}
+        <div>Error: {$box.msg}</div>
+      {/if}
+    </div>
   </div>
 
   {#if $box.status == 'Loading'}

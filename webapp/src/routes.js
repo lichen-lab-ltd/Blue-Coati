@@ -12,4 +12,8 @@ export default [
     name: 'Curate',
     path: 'curate',
   },
+  {
+    name: 'Moderate',
+    path: 'moderate',
+  },
 ];
