@@ -43,22 +43,22 @@ contract JudgementWithChain is Judgement {
             pair.losingsig
         );
         require(expectedLoser == loser, "INVALID_LOSER_SIGNATURE");
+        emit BetSubmitted(documentId, loser, pair.losingBetId);
 
-        if (pair.winningBetId != 0) {
-            if (_betsCounted[documentId][pair.winningBetId] == false) {
-                _betsCounted[documentId][pair.winningBetId] = true; // Can get reward only once
-                address expectedWinner = address(uint160(pair.winningBetId >> 96));
-                address winner = _recover(
-                    documentId,
-                    pair.winningBetId,
-                    pair.parentBetId,
-                    result,
-                    pair.winningTimestamp,
-                    pair.winningSig
-                );
-                require(expectedWinner == winner, "INVALID_WINNER_SIGNATURE");
-                _deposit.transferFrom(loser, winner, _betAmount);
-            }
+        if (pair.winningBetId != 0 && _betsCounted[documentId][pair.winningBetId]) {
+            _betsCounted[documentId][pair.winningBetId] = true; // Can get reward only once
+            address expectedWinner = address(uint160(pair.winningBetId >> 96));
+            address winner = _recover(
+                documentId,
+                pair.winningBetId,
+                pair.parentBetId,
+                result,
+                pair.winningTimestamp,
+                pair.winningSig
+            );
+            require(expectedWinner == winner, "INVALID_WINNER_SIGNATURE");
+            _deposit.transferFrom(loser, winner, _betAmount);
+            emit BetSubmitted(documentId, winner, pair.winningBetId);
         } else {
             _deposit.transferFrom(loser, address(this), _betAmount);
         }

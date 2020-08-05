@@ -1,0 +1,9 @@
+{
+  "name": "common",
+  "description": "Common Library for Blue-Coati",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "eth-sig-util": "^2.5.3"
+  }
+}

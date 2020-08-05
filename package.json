@@ -16,7 +16,8 @@
     "packages": [
       "contracts",
       "webapp",
-      "subgraph"
+      "subgraph",
+      "common"
     ],
     "nohoist": [
       "blue-coati-subgraph/@graphprotocol/graph-ts",
