@@ -161,16 +161,16 @@ store.staticInit = async function () {
   if (init_data.init) {
     return init_data;
   }
-  init_data.posts = await Box.getThreadByAddress(
+  let _posts = await Box.getThreadByAddress(
     '/orbitdb/zdpuAqAGkAzxibXccbKHKev5pKZcPKsaFAQD6upFofjF658Vt/3box.thread.blue-coati-dev.other-coati'
   );
+  init_data.posts = _posts.reverse(); // this is not cloned
   init_data.bets = await Box.getThreadByAddress(
     '/orbitdb/zdpuAyirKfdqFE3mnqCho4AXv43HTkouXp4iwxjGWnmQSdXDa/3box.thread.blue-coati-dev.bets'
   );
   transformBox(init_data);
   init_data.mapping = map(init_data.betTrees);
   init_data.init = true;
-  console.log('init: ', init_data);
   return init_data;
 };
 

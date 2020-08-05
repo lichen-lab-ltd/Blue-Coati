@@ -12,7 +12,6 @@
   import {time} from '../stores/time'
   let depositStore = userDeposit.store;
   let status = userDeposit.status;
-  $: console.log($status)
 </script>
 
 <div class="flex flex-col items-center bg-gray-800">
