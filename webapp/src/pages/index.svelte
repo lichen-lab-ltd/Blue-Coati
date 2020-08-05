@@ -5,15 +5,25 @@
   import PostForm from '../components/PostForm.svelte';
   import Post from '../components/Post.svelte';
   import Header from '../components/Header.svelte';
-  import userDeposit from '../stores/my_deposit';
-  let status = userDeposit.status
 
   import box from '../stores/3box.js';
   import {mapping} from '../stores/postBetsMapping.js';
+  import userDeposit from '../stores/my_deposit';
+  let status = userDeposit.status
 
+  const BETPERIOD = 30;
   let addingPost = false;
   let newPost;
   $: p =  [...$box.posts];
+
+  const toShow = (_map, _postId) => {
+    if (_map[_postId]){
+      if (_map[_postId].isInvalidCount > _map[_postId].isValidCount) {
+        return false
+      } 
+    } 
+    return true
+  }
 </script>
 
 <div class="flex flex-col items-center bg-gray-800">
@@ -31,7 +41,9 @@
           <PostForm />
         {/if}
         {#each value.posts as post}
-          <Post {post} betsMap="{value.mapping}"/>
+          {#if toShow(value.mapping, post.postId)}
+            <Post {post} betsMap={value.mapping} betPeriod={BETPERIOD} />
+          {/if}
         {/each}
       {:catch error}
         <p>Error in loading inital posts, please sign in</p>
@@ -43,7 +55,9 @@
           <PostForm />
         {/if}
         {#each p.reverse() as post}
-          <Post {post} betsMap="{$mapping}"/>
+          {#if toShow($mapping, post.postId)}
+            <Post {post} betsMap={$mapping} betPeriod={BETPERIOD}/>
+          {/if}
         {/each}
       </div>
     {:else if $box.status == 'Error'}
