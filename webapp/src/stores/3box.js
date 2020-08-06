@@ -1,10 +1,14 @@
 import Box from '../3box.min.js';
 import {writable} from 'svelte/store';
 import {wallet} from './wallet';
-import {map} from './postBetsMapping.js';
 import local from '../utils/local';
 import {betSigner} from '../common/eip712'; // TODO use 'common/eip712
-import {generateBetTree, getFreestParent, insertInTree} from '../utils/bettree';
+import {
+  generateBetTree,
+  getFreestParent,
+  insertInTree,
+  map,
+} from '../utils/bettree';
 import {keccak256} from '@ethersproject/solidity';
 import {BigNumber} from '@ethersproject/bignumber';
 
