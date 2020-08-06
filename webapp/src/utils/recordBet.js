@@ -9,7 +9,13 @@ const record = async function (_postId, _bet) {
   }
   try {
     console.log('post:::: ', _postId);
-    console.log('bet:::: ', _bet);
+    let documentId = keccak256(['string'], [_postId]);
+    let losingBet = _bet.children[0];
+    console.log(documentId);
+    console.log(losingBet.id);
+    console.log(losingBet.timestamp);
+    console.log(losingBet.signature);
+
     // bytes32 documentId,
     // uint256 losingBetId,
     // uint64 losingTimestamp,
@@ -18,10 +24,7 @@ const record = async function (_postId, _bet) {
     // uint64 winningTimestamp,
     // uint256 parentBetId, // can be another losing bet // TODO chain it in a single call or can be 0 for document bet
     // bytes calldata winningSig
-    let documentId = keccak256(['string'], [_postId]);
-    let losingBet = _bet.children[0];
-    console.log(documentId);
-    console.log(losingBet.id, losingBet.timestamp, losingBet.signature);
+
     await wallet.contracts.Judgement.recordLosingBet(
       documentId,
       losingBet.id,

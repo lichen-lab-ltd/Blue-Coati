@@ -13,7 +13,6 @@
     } else {return false}
   }
   $: judged = !!judgement
-  $: console.log(bet)
 </script>
 
 <section class="~neutral m-2 card !normal content bg-gray-700 justify-between">
@@ -22,7 +21,7 @@
   <div class="flex flex-row">
     {#if judged}
       <span  class={judged.accepted ? "m-1 text-sm text-green-500" : "m-1 text-sm text-red-500"}>
-        {judged.accepted ? ' Moderated - Valid' : 'Moderated - Invalid'}
+        {judgement.accepted ? ' Moderated - Valid' : 'Moderated - Invalid'}
       </span>
     {/if}
   </div>
@@ -34,7 +33,7 @@
     </span>
     {#if judged}
       {#if bet.bet.children.length != 0}
-        {#if bet.bet.isValid == judged.accepted}
+        {#if bet.bet.isValid == judgement.accepted}
           <div 
             on:click={() => {recordBet(bet.postId, bet.bet)}}
             class="button border border-pink-500 text-pink-500 bg-gray-700">
