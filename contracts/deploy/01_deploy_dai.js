@@ -8,8 +8,10 @@ module.exports = async ({getNamedAccounts, deployments}) => {
       from: daiMinter,
       contract: "DAIWithInitialBalance",
       args: ["10000000000000000000000000", "10000000000000000000"],
+      log: true,
     });
   }
 
   return true;
 };
+module.exports.skip = async () => true;

@@ -1,11 +1,11 @@
 import WalletStores from 'web3w';
 import contractsInfo from 'contractsInfo';
 
-import TorusModule from 'web3w-torus';
+// import TorusModule from 'web3w-torus';
 
-import WalletConnectModule from 'web3w-walletconnect';
+// import WalletConnectModule from 'web3w-walletconnect';
 
-const fallbackUrl = 'http://localhost:8545'; // TODO use env
+// const fallbackUrl = 'http://localhost:8545'; // TODO use env
 
 const {wallet, builtin, chain, transactions, balance} = WalletStores({
   // log: console,
@@ -13,8 +13,8 @@ const {wallet, builtin, chain, transactions, balance} = WalletStores({
   chainConfigs: contractsInfo,
   options: [
     'builtin',
-    new TorusModule({fallbackUrl}),
-    new WalletConnectModule({fallbackUrl}),
+    // new TorusModule({fallbackUrl}),
+    // new WalletConnectModule({fallbackUrl}),
   ],
   // builtin: {autoProbe: true, metamaskReloadFix: true},
 });

@@ -3,6 +3,7 @@ yarn-error.log
 .newsh.json
 .DS_Store
 .env
+.env.rinkeby
 .mnemonic*
 .vscode/*
 !.vscode/settings.json.default
