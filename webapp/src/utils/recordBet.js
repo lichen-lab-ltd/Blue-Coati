@@ -1,6 +1,6 @@
 import {keccak256} from '@ethersproject/solidity';
 import {wallet} from '../stores/wallet';
-import box from '../stores/3box';
+import {BigNumber} from '@ethersproject/bignumber';
 
 const record = async function (_postId, _bet) {
   await wallet.connect('builtin'); // TODO choice
@@ -8,8 +8,8 @@ const record = async function (_postId, _bet) {
     await wallet.unlock(); // TOOO catch ?
   }
   try {
-    console.log(_bet);
-    console.log(_bet.children[0]); // losing bet
+    console.log('post:::: ', _postId);
+    console.log('bet:::: ', _bet);
     // bytes32 documentId,
     // uint256 losingBetId,
     // uint64 losingTimestamp,
@@ -20,6 +20,8 @@ const record = async function (_postId, _bet) {
     // bytes calldata winningSig
     let documentId = keccak256(['string'], [_postId]);
     let losingBet = _bet.children[0];
+    console.log(documentId);
+    console.log(losingBet.id, losingBet.timestamp, losingBet.signature);
     await wallet.contracts.Judgement.recordLosingBet(
       documentId,
       losingBet.id,

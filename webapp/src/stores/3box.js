@@ -110,7 +110,6 @@ store.bet = async function (_isValid, _postId) {
   const parent = getFreestParent(betTree, _isValid);
 
   const incrementId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER); // TODO increment
-  const now = Math.floor(Date.now() / 1000);
   const id = BigNumber.from(2)
     .pow(96)
     .mul(wallet.address)
@@ -121,7 +120,7 @@ store.bet = async function (_isValid, _postId) {
     id,
     parentId: parent.id || '0',
     isValid: _isValid ? 'true' : 'false',
-    timestamp: now,
+    timestamp: Math.floor(Date.now() / 1000),
   };
   const signature = await wallet.provider.send('eth_signTypedData_v4', [
     wallet.address,
@@ -136,7 +135,7 @@ store.bet = async function (_isValid, _postId) {
     _isValid,
     signature,
     box.spaceDID,
-    now
+    message.timestamp
   );
 
   let betId = await box.betsThread.post(newBetTree);
@@ -172,6 +171,9 @@ store.deleteAllBets = async function () {
   try {
     box.bets.forEach(async (b) => {
       await box.betsThread.deletePost(b.postId);
+    });
+    box.posts.forEach(async (b) => {
+      await box.postsThread.deletePost(b.postId);
     });
     local.write('blue-coati-dev-bets', '');
   } catch (e) {

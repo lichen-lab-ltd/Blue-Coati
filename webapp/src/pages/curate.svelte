@@ -73,7 +73,7 @@
           <div>
             {#each p.reverse() as post}
               {#if $time < (post.timestamp + BETPERIOD)}
-                <Post {post} betsMap={$mapping} {BETPERIOD}/>
+                <Post {post} betsMap={$mapping} betPeriod={BETPERIOD}/>
               {/if }
             {/each}
           </div>
