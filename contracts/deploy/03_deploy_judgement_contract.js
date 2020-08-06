@@ -2,7 +2,6 @@ const {BigNumber} = require("@ethersproject/bignumber");
 module.exports = async ({getNamedAccounts, deployments, network}) => {
   const {deployer, judge} = await getNamedAccounts();
   const {deploy} = deployments;
-  const dev = !network.live;
 
   const days = 24 * 60 * 60;
   const cents = BigNumber.from("100000000000000"); //  TODO when dai cents : BigNumber.from("10000000000000000");
@@ -11,9 +10,8 @@ module.exports = async ({getNamedAccounts, deployments, network}) => {
 
   await deploy("Judgement", {
     from: deployer,
-    proxy: dev && "postUpgrade",
+    proxy: "postUpgrade",
     args: [judge, depositContract.address, 7 * days, cents.mul(10)],
+    log: true,
   });
-
-  return !dev;
 };

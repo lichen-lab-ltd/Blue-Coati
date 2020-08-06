@@ -59,9 +59,10 @@
     "shell:dev:no-webapp": "npm-run-all -l externals:down --parallel shell:externals --sequential subgraph:setup contracts:clean shell:contracts:dev subgraph:deploy seed",
 
     "// STAGING : deploy on staging": "",
-    "staging:subgraph:deploy": "dotenv -e .env.staging -e .env -- npm --prefix subgraph run kovan:deploy ../contracts/deployments/kovan",
+    "staging:contracts:deploy": "dotenv -e .env.rinkeby -e .env.staging -e .env -- npm --prefix contracts run rinkeby:deploy",
+    "staging:subgraph:deploy": "dotenv -e .env.staging -e .env -- npm --prefix subgraph run rinkeby:deploy ../contracts/deployments/rinkeby",
     "staging:webapp:build": "dotenv -e .env.staging -e .env -- npm --prefix webapp run build",
-    "staging:seed": "dotenv -e .env.staging -e .env -e contracts/.env -- npm --prefix contracts run kovan:run scripts/seed.js",
+    "staging:seed": "dotenv -e .env.staging -e .env -e contracts/.env -- npm --prefix contracts run rinkeby:run scripts/seed.js",
 
     "// SERVE Webapp ": "",
     "webapp:build": "dotenv -- npm --prefix webapp run build",
