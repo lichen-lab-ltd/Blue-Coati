@@ -1,12 +1,16 @@
 import {derived} from 'svelte/store';
 import box from './3box';
-import {countTree, findInTree} from '../utils/bettree';
+import {countTree} from '../utils/bettree';
 
-const userBets = derived(box, ($box, set) => {
-  if ($box.status == 'Ready') {
-    set(map($box));
-  }
-});
+const userBets = derived(
+  box,
+  ($box, set) => {
+    if ($box.status == 'Ready') {
+      set(map($box));
+    }
+  },
+  []
+);
 
 const map = function (box) {
   let bets = [];
@@ -16,7 +20,7 @@ const map = function (box) {
     const countFunc = (bet, parent) => {
       if (parent) {
         if (bet.author == initState.user) {
-          initState.count.push({postId: postId, bet});
+          initState.count.push({postId: postId, parent, bet});
         }
       }
     };
@@ -25,8 +29,5 @@ const map = function (box) {
   }
   return bets;
 };
-
-// This is for sumbmission
-const findBet = function () {};
 
 export {map, userBets};

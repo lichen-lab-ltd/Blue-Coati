@@ -81,7 +81,8 @@ export function generateBetTree(postId, bets) {
                   bet.id,
                   bet.isValid,
                   bet.signature,
-                  bet3box.author
+                  bet3box.author,
+                  bet3box.timestamp
                 );
               }
             }
@@ -95,7 +96,15 @@ export function generateBetTree(postId, bets) {
   return root;
 }
 
-export function insertInTree(root, parent, id, isValid, signature, author) {
+export function insertInTree(
+  root,
+  parent,
+  id,
+  isValid,
+  signature,
+  author,
+  timestamp
+) {
   const newTree = root; // TODO clone
   let parentTree;
   if (parent) {
@@ -115,6 +124,7 @@ export function insertInTree(root, parent, id, isValid, signature, author) {
     signature,
     author,
     children: [],
+    timestamp,
   });
   return newTree;
 }

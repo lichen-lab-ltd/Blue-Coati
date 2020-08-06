@@ -110,6 +110,7 @@ store.bet = async function (_isValid, _postId) {
   const parent = getFreestParent(betTree, _isValid);
 
   const incrementId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER); // TODO increment
+  const now = Math.floor(Date.now() / 1000);
   const id = BigNumber.from(2)
     .pow(96)
     .mul(wallet.address)
@@ -120,7 +121,7 @@ store.bet = async function (_isValid, _postId) {
     id,
     parentId: parent.id || '0',
     isValid: _isValid ? 'true' : 'false',
-    timestamp: Math.floor(Date.now() / 1000),
+    timestamp: now,
   };
   const signature = await wallet.provider.send('eth_signTypedData_v4', [
     wallet.address,
@@ -128,7 +129,15 @@ store.bet = async function (_isValid, _postId) {
   ]);
   console.log({message, signature, address: wallet.address});
 
-  const newBetTree = insertInTree(betTree, parent, id, _isValid, signature);
+  const newBetTree = insertInTree(
+    betTree,
+    parent,
+    id,
+    _isValid,
+    signature,
+    box.spaceDID,
+    now
+  );
 
   let betId = await box.betsThread.post(newBetTree);
   if (localData) {

@@ -19,16 +19,18 @@
   let depositStore = userDeposit.store;
   let status = userDeposit.status;
   $: p = [...$box.posts];
-  $: b = [...$box.bets];
+  $: b = [...$userBets]
   const BETPERIOD = 30; // deposit
 
   betRecordings.listen();
   $: console.log($betRecordings)
+  $: console.log("userBets: ", $userBets)
 
 </script>
 
 <div class="flex flex-col items-center bg-gray-800">
   <Header />
+  <Button on:click="{() => box.deleteAllBets()}">Dev: delete bets</Button>
   {#if $wallet.address }
   <div>
     {#if $status.withdrawStatus && $status.withdrawStatus != 'Unlocking' && $status.hasDeposit}
@@ -65,37 +67,35 @@
 
   <div class="grid grid-cols-2 gap-2">
     <!-- Posts to curate -->
-    <div class="px-1 justify-center">
-      {#if $box.status == 'Ready'}
-      <div class="m-2 text-2xl text-gray-500 underline text-start">Posts to curate:</div>
-        <div>
-          {#each p.reverse() as post}
-            {#if $time < (post.timestamp + BETPERIOD)}
-              <Post {post} betsMap={$mapping} {BETPERIOD}/>
-            {/if }
-          {/each}
-        </div>
-      {:else if $box.status == 'Error'}
-        <div>Error: {$box.msg}</div>
-      {/if}
-    </div>
+      <div class="px-1 justify-center">
+        {#if $box.status == 'Ready'}
+        <div class="m-2 text-2xl text-gray-500 underline text-start">Posts to curate:</div>
+          <div>
+            {#each p.reverse() as post}
+              {#if $time < (post.timestamp + BETPERIOD)}
+                <Post {post} betsMap={$mapping} {BETPERIOD}/>
+              {/if }
+            {/each}
+          </div>
+        {:else if $box.status == 'Error'}
+          <div>Error: {$box.msg}</div>
+        {/if}
+      </div>
 
-    <!-- Bets made -->
-    <div class="px-1 justify-center">
-      {#if $box.status == 'Ready'}
-      <div class="m-2 text-2xl text-gray-500 underline text-start">My bets:</div>
-        <div>
-          {#each b.reverse() as bet}
-            {#if bet.author == $box.spaceDID}
-              <Bet {bet} judgement={$judgements[bet.message.postId]} />
-            {/if}
-          {/each}
-        </div>
-      {:else if $box.status == 'Error'}
-        <div>Error: {$box.msg}</div>
-      {/if}
+      <!-- Bets made -->
+      <div class="px-1 justify-center">
+        {#if $box.status == 'Ready' && $userBets && $judgements}
+        <div class="m-2 text-2xl text-gray-500 underline text-start">My bets:</div>
+          <div>
+            {#each b.reverse() as bet}
+              <Bet {bet} judgement={$judgements[bet.postId]} />
+            {/each}
+          </div>
+        {:else if $box.status == 'Error'}
+          <div>Error: {$box.msg}</div>
+        {/if}
+      </div>
     </div>
-  </div>
 
   {#if $box.status == 'Loading'}
     <Modal closable="{false}">
