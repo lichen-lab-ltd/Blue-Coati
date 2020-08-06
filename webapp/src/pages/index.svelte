@@ -9,8 +9,6 @@
   import box from '../stores/3box.js';
   import {mapping} from '../stores/postBetsMapping.js';
   import userDeposit from '../stores/my_deposit';
-  import judgement from '../stores/moderation';
-  judgement.listen()
   let status = userDeposit.status
 
   const BETPERIOD = 30;
@@ -25,8 +23,6 @@
     } 
     return true
   }
-
-  $: console.log($judgement)
 </script>
 
 <div class="flex flex-col items-center bg-gray-800">

@@ -1,6 +1,6 @@
 import {derived} from 'svelte/store';
 import box from './3box';
-import {countTree} from '../utils/bettree';
+import {countTree, findInTree} from '../utils/bettree';
 
 const userBets = derived(box, ($box, set) => {
   if ($box.status == 'Ready') {
@@ -25,5 +25,8 @@ const map = function (box) {
   }
   return bets;
 };
+
+// This is for sumbmission
+const findBet = function () {};
 
 export {map, userBets};

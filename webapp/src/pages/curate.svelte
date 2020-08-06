@@ -12,12 +12,18 @@
   import box from '../stores/3box';
   import {userBets} from '../stores/my_bets';
   import {time} from '../stores/time'
-  import {mapping} from '../stores/postBetsMapping.js';
+  import {mapping} from '../stores/postBetsMapping';
+  import judgements from '../stores/postJudgementMapping'
+  import betRecordings from '../stores/betRecording'
 
   let depositStore = userDeposit.store;
   let status = userDeposit.status;
   $: p = [...$box.posts];
+  $: b = [...$box.bets];
   const BETPERIOD = 30; // deposit
+
+  betRecordings.listen();
+  $: console.log($betRecordings)
 
 </script>
 
@@ -61,7 +67,7 @@
     <!-- Posts to curate -->
     <div class="px-1 justify-center">
       {#if $box.status == 'Ready'}
-      <div class="m-2 text-3xl text-gray-500 underline text-start">All Posts:</div>
+      <div class="m-2 text-2xl text-gray-500 underline text-start">Posts to curate:</div>
         <div>
           {#each p.reverse() as post}
             {#if $time < (post.timestamp + BETPERIOD)}
@@ -77,11 +83,11 @@
     <!-- Bets made -->
     <div class="px-1 justify-center">
       {#if $box.status == 'Ready'}
-      <div class="m-2 text-3xl text-gray-500 underline text-start">My bets:</div>
+      <div class="m-2 text-2xl text-gray-500 underline text-start">My bets:</div>
         <div>
-          {#each $box.bets.reverse() as bet}
+          {#each b.reverse() as bet}
             {#if bet.author == $box.spaceDID}
-              <Bet {bet} />
+              <Bet {bet} judgement={$judgements[bet.message.postId]} />
             {/if}
           {/each}
         </div>

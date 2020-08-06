@@ -2,9 +2,11 @@ import {graphqlStore} from '../utils/graphql';
 export default graphqlStore(
   `
   subscription {
-    judgements{
+    betRecordeds{
       id
-      accepted
+      documentId
+      betId
+      bettor
       timestamp
     }
   }
