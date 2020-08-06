@@ -82,7 +82,7 @@ export function generateBetTree(postId, bets) {
                   bet.isValid,
                   bet.signature,
                   bet3box.author,
-                  bet3box.timestamp
+                  bet.timestamp
                 );
               }
             }

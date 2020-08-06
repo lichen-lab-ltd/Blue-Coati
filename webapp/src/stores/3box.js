@@ -110,9 +110,8 @@ store.bet = async function (_isValid, _postId) {
   const parent = getFreestParent(betTree, _isValid);
 
   const incrementId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER); // TODO increment
-  const id = BigNumber.from(2)
-    .pow(96)
-    .mul(wallet.address)
+  const id = BigNumber.from(wallet.address)
+    .mul(BigNumber.from(2).pow(96))
     .add(incrementId)
     .toString();
   const message = {
