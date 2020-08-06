@@ -3,7 +3,7 @@ import {writable} from 'svelte/store';
 import {wallet} from './wallet';
 import {map} from './postBetsMapping.js';
 import local from '../utils/local';
-import {betSigner} from '../utils/eip712';
+import {betSigner} from '../common/eip712'; // TODO use 'common/eip712
 import {generateBetTree, getFreestParent, insertInTree} from '../utils/bettree';
 import {keccak256} from '@ethersproject/solidity';
 import {BigNumber} from '@ethersproject/bignumber';
@@ -126,6 +126,7 @@ store.bet = async function (_isValid, _postId) {
     wallet.address,
     betSigner.construct(message),
   ]);
+  console.log({message, signature, address: wallet.address});
 
   const newBetTree = insertInTree(betTree, parent, id, _isValid, signature);
 

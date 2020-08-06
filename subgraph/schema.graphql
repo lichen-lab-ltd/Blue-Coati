@@ -9,3 +9,11 @@ type Judgement @entity {
   accepted: Boolean!
   timestamp: BigInt!
 }
+
+type BetRecorded @entity {
+  id: ID!
+  documentId: Bytes
+  betId: BigInt!
+  bettor: Bytes!
+  timestamp: BigInt!
+}

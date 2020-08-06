@@ -3,8 +3,11 @@ import {
   WithdrawalRequested,
   DepositWithdrew,
 } from "../generated/Deposit/DepositContract";
-import {JudgementCasted} from "../generated/Judgement/JudgementContract";
-import {UserDeposit, Judgement} from "../generated/schema";
+import {
+  JudgementCasted,
+  BetSubmitted,
+} from "../generated/Judgement/JudgementContract";
+import {UserDeposit, Judgement, BetRecorded} from "../generated/schema";
 import {log, BigInt} from "@graphprotocol/graph-ts";
 
 let zeroAddress = "0x0000000000000000000000000000000000000000";
@@ -49,5 +52,17 @@ export function handleJudgementCasted(event: JudgementCasted): void {
   }
   entity.accepted = event.params.accepted;
   entity.timestamp = event.block.timestamp;
+  entity.save();
+}
+
+export function handleBetSubmitted(event: BetSubmitted): void {
+  let id = event.params.documentId.toHex() + "_" + event.params.id.toHex();
+  let entity = BetRecorded.load(id);
+  if (!entity) {
+    entity = new BetRecorded(id);
+  }
+  entity.documentId = event.params.documentId;
+  entity.betId = event.params.id;
+  entity.bettor = event.params.bettor;
   entity.save();
 }

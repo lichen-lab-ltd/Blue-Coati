@@ -1,6 +1,6 @@
-// import {TypedDataUtils,} from 'eth-sig-util'; // Fails to import
+// import {TypedDataUtils,} from 'eth-sig-util'; // Fails to import // else we could use "common/eip712"
 
-export class EIP712Signer {
+class EIP712Signer {
   constructor(struct) {
     this.eip712Struct = struct;
     const {types, domain, primaryType} = struct;
@@ -51,4 +51,9 @@ const eip712Struct = {
   },
   primaryType: 'Bet',
 };
-export const betSigner = new EIP712Signer(eip712Struct);
+const betSigner = new EIP712Signer(eip712Struct);
+
+module.exports = {
+  EIP712Signer,
+  betSigner,
+};
