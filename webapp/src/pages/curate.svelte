@@ -20,7 +20,7 @@
   let status = userDeposit.status;
   $: p = [...$box.posts];
   $: b = [...$userBets]
-  const BETPERIOD = 30; // deposit
+  const BETPERIOD = 300; // deposit
 
   betRecordings.listen();
   $: console.log($betRecordings)
@@ -30,7 +30,7 @@
 
 <div class="flex flex-col items-center bg-gray-800">
   <Header />
-  <Button on:click="{() => box.deleteAllBets()}">Dev: delete bets</Button>
+  <!-- <Button on:click="{() => box.deleteAllBets()}">Dev: delete bets</Button> -->
   {#if $wallet.address }
   <div>
     {#if $status.withdrawStatus && $status.withdrawStatus != 'Unlocking' && $status.hasDeposit}
@@ -87,7 +87,7 @@
         {#if $box.status == 'Ready' && $userBets && $judgements}
         <div class="m-2 text-2xl text-gray-500 underline text-start">My bets:</div>
           <div>
-            {#each b.reverse() as bet}
+            {#each b as bet}
               <Bet {bet} judgement={$judgements[bet.postId]} />
             {/each}
           </div>

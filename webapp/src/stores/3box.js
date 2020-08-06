@@ -48,12 +48,18 @@ store.load = async function () {
   }
   try {
     let _box = await Box.openBox(wallet.address, window.ethereum);
-    let _space = await _box.openSpace('blue-coati-dev');
+    let _space = await _box.openSpace('blue-coati-hackfs');
+    // let _posts = await _space.joinThread('other-colour-coati', {
+    //   firstModerator: '0x7633Fe8542c2218B5A25777477F63D395aA5aFB4',
+    // });
+    // let _bets = await _space.joinThread('bets', {
+    //   firstModerator: '0x7633Fe8542c2218B5A25777477F63D395aA5aFB4',
+    // });
     let _posts = await _space.joinThreadByAddress(
-      '/orbitdb/zdpuAqAGkAzxibXccbKHKev5pKZcPKsaFAQD6upFofjF658Vt/3box.thread.blue-coati-dev.other-coati'
+      '/orbitdb/zdpuAwUZGhuykA6jFNCVNfqH5EKK35wUjDwgeVDH7ysH1bh3t/3box.thread.blue-coati-hackfs.other-colour-coati'
     );
     let _bets = await _space.joinThreadByAddress(
-      '/orbitdb/zdpuAyirKfdqFE3mnqCho4AXv43HTkouXp4iwxjGWnmQSdXDa/3box.thread.blue-coati-dev.bets'
+      '/orbitdb/zdpuArb3qE5iLr1LG3xoZp2Ec8LWBiQdAaLShuJGG2MvmDerL/3box.thread.blue-coati-hackfs.bets'
     );
     _posts.onUpdate(async () => {
       box.posts = await _posts.getPosts();
@@ -110,8 +116,9 @@ store.bet = async function (_isValid, _postId) {
   const parent = getFreestParent(betTree, _isValid);
 
   const incrementId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER); // TODO increment
-  const id = BigNumber.from(wallet.address)
-    .mul(BigNumber.from(2).pow(96))
+  const id = BigNumber.from(2)
+    .pow(96)
+    .mul(wallet.address)
     .add(incrementId)
     .toString();
   const message = {
@@ -185,11 +192,11 @@ store.staticInit = async function () {
     return init_data;
   }
   let _posts = await Box.getThreadByAddress(
-    '/orbitdb/zdpuAqAGkAzxibXccbKHKev5pKZcPKsaFAQD6upFofjF658Vt/3box.thread.blue-coati-dev.other-coati'
+    '/orbitdb/zdpuAwUZGhuykA6jFNCVNfqH5EKK35wUjDwgeVDH7ysH1bh3t/3box.thread.blue-coati-hackfs.other-colour-coati'
   );
   init_data.posts = _posts.reverse(); // this is not cloned
   init_data.bets = await Box.getThreadByAddress(
-    '/orbitdb/zdpuAyirKfdqFE3mnqCho4AXv43HTkouXp4iwxjGWnmQSdXDa/3box.thread.blue-coati-dev.bets'
+    '/orbitdb/zdpuArb3qE5iLr1LG3xoZp2Ec8LWBiQdAaLShuJGG2MvmDerL/3box.thread.blue-coati-hackfs.bets'
   );
   transformBox(init_data);
   init_data.mapping = map(init_data.betTrees);

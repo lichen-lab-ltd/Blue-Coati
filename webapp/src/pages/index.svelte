@@ -11,7 +11,7 @@
   import userDeposit from '../stores/my_deposit';
   let status = userDeposit.status
 
-  const BETPERIOD = 30;
+  const BETPERIOD = 300;
   let addingPost = false;
   let newPost;
   $: p =  [...$box.posts];
