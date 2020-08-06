@@ -16,11 +16,11 @@ const map = function (box) {
   let bets = [];
   let user = box.spaceDID;
   for (const postId of Object.keys(box.betTrees)) {
-    let initState = {user, count: []};
+    let initState = {postId, user, count: []};
     const countFunc = (bet, parent) => {
       if (parent) {
         if (bet.author == initState.user) {
-          initState.count.push({postId: postId, parent, bet});
+          initState.count.push({postId: initState.postId, parent, bet});
         }
       }
     };

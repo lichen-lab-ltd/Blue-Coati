@@ -13,6 +13,7 @@
     } else {return false}
   }
   $: judged = !!judgement
+  $: console.log(bet)
 </script>
 
 <section class="~neutral m-2 card !normal content bg-gray-700 justify-between">
@@ -33,14 +34,20 @@
     </span>
     {#if judged}
       {#if bet.bet.children.length != 0}
-        <div 
-          on:click={() => {recordBet(bet.postId, bet.bet)}}
-          class="button border border-pink-500 text-pink-500 bg-gray-700">
-          Submit
-        </div>
+        {#if bet.bet.isValid == judged.accepted}
+          <div 
+            on:click={() => {recordBet(bet.postId, bet.bet)}}
+            class="button border border-pink-500 text-pink-500 bg-gray-700">
+            Submit
+          </div>
+        {:else}
+          <div class="button opacity-50 cursor-not-allowed border bg-gray-700 text-gray-200">
+            Incorrect bet
+          </div>
+        {/if}
       {:else}
         <div class="button opacity-50 cursor-not-allowed border bg-gray-700 text-gray-200">
-          No counter bets
+          No counter bet
         </div>
       {/if}
     {/if}
