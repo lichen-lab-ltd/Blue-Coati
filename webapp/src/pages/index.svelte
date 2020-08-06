@@ -11,11 +11,10 @@
   import userDeposit from '../stores/my_deposit';
   let status = userDeposit.status
 
-  const BETPERIOD = 30;
+  const BETPERIOD = 300;
   let addingPost = false;
   let newPost;
   $: p =  [...$box.posts];
-
   const toShow = (_map, _postId) => {
     if (_map[_postId]){
       if (_map[_postId].isInvalidCount > _map[_postId].isValidCount) {

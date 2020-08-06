@@ -26,7 +26,7 @@ export function graphqlStore(queryString, transform) {
       _set({stale: result.stale});
     }
     if (result.error) {
-      _set({error: data.error});
+      _set({error: result.error});
     }
     if (result.data) {
       const data = transform(result.data);

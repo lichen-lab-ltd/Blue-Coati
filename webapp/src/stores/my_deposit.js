@@ -71,7 +71,6 @@ userDeposit.store = Store;
 userDeposit.status = status;
 
 userDeposit.add = async function () {
-  console.log('adding deposit');
   await wallet.connect('builtin'); // TODO choice
   if (!wallet.address) {
     await wallet.unlock(); // TOOO catch ?
@@ -79,7 +78,6 @@ userDeposit.add = async function () {
   try {
     // 0.05 ETH per deposit
     let amountEth = BigNumber.from(5).mul(BigNumber.from(10).pow(16));
-    console.log('amount eth', amountEth);
     await wallet.contracts.Deposit.deposit({value: amountEth});
     await box.load();
   } catch (e) {
@@ -99,7 +97,6 @@ userDeposit.withdrawRequest = async function () {
 };
 
 userDeposit.withdrawDeposit = async function () {
-  console.log('withdrawing');
   await wallet.connect('builtin'); // TODO choice
   if (!wallet.address) {
     await wallet.unlock(); // TOOO catch ?

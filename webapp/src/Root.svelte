@@ -19,7 +19,7 @@
     {#if $wallet.address == judgeAddress }
       <Link class="text-pink-500 m-1" name="Moderate">Moderate</Link>
     {/if}
-    <!-- <Link class="text-pink-500 m-1" name="Wallet">Wallet</Link> -->
+    <Link class="text-pink-500 m-1" name="Wallet">Wallet</Link>
   </div>
 </nav>
 
