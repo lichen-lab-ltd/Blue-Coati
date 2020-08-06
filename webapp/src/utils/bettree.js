@@ -1,4 +1,4 @@
-import {betSigner} from './eip712';
+import {betSigner} from '../common/eip712'; // TODO use 'common/eip712
 import {BigNumber} from '@ethersproject/bignumber';
 import {keccak256} from '@ethersproject/solidity';
 

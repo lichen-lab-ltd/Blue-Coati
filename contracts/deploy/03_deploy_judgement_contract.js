@@ -5,7 +5,7 @@ module.exports = async ({getNamedAccounts, deployments, network}) => {
   const dev = !network.live;
 
   const days = 24 * 60 * 60;
-  const cents = BigNumber.from("10000000000000000");
+  const cents = BigNumber.from("100000000000000"); //  TODO when dai cents : BigNumber.from("10000000000000000");
 
   const depositContract = await deployments.get("Deposit");
 

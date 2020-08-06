@@ -7,6 +7,7 @@ import "./Libraries/SigUtil.sol";
 
 contract Judgement is Proxied {
     event JudgementCasted(bytes32 indexed documentId, bool accepted);
+    event BetSubmitted(bytes32 indexed documentId, address indexed bettor, uint256 indexed id);
 
     function castJudgement(bytes32 documentId, bool accepted) external {
         require(msg.sender == _judge);
@@ -36,18 +37,25 @@ contract Judgement is Proxied {
         bytes calldata winningSig
     ) external {
         require(_documents[documentId].judgementTime > 0, "JUDGEMENT_DOESNT_EXIST");
-        require(uint64(block.timestamp) < _documents[documentId].judgementTime + _claimPeriod, "TOO_LATE");
+        // require(uint64(block.timestamp) < _documents[documentId].judgementTime + _claimPeriod, "TOO_LATE");
+
         require(_betsCounted[documentId][losingBetId] == false, "ALREADY_SUBMITED");
+        _betsCounted[documentId][losingBetId] = true;
 
         bool result = _documents[documentId].result;
 
-        _betsCounted[documentId][losingBetId] = true;
-
         address loser = _recover(documentId, losingBetId, winningBetId, !result, losingTimestamp, losingsig);
+        console.log(loser);
+        require(loser == address(uint160(losingBetId >> 96)), "INVALID_LOSER_SIGNATURE");
 
-        if (winningBetId == 0) {
+        emit BetSubmitted(documentId, loser, losingBetId);
+
+        if (winningBetId == 0 && !_betsCounted[documentId][winningBetId]) {
+            _betsCounted[documentId][winningBetId] = true;
             address winner = _recover(documentId, winningBetId, parentBetId, result, winningTimestamp, winningSig);
+            require(winner == address(uint160(winningBetId >> 96)), "INVALID_WINNER_SIGNATURE");
             _deposit.transferFrom(loser, winner, _betAmount);
+            emit BetSubmitted(documentId, winner, winningBetId);
         } else {
             _deposit.transferFrom(loser, address(this), _betAmount);
         }
@@ -75,13 +83,13 @@ contract Judgement is Proxied {
     //     return chainId == _chainId;
     // }
 
-    bytes32 constant EIP712DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,string version)");
+    bytes32 constant EIP712DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name)");
     bytes32 constant DOMAIN_SEPARATOR = keccak256(
         abi.encode(EIP712DOMAIN_TYPEHASH, keccak256("Judgement")) // TODO chainId : , keccak256("1"))
     );
 
     bytes32 constant BET_TYPEHASH = keccak256(
-        "Bet(bytes32 documentId,uint256 id,uint256 parentId,string isValid,uint64 timestamp)" // isValid: bool (metamask issue)
+        "Bet(bytes32 documentId,uint256 id,uint256 parentId,string isValid,uint64 timestamp)" // TODO isValid: bool (metamask issue)
     );
 
     function _encodeMessage(
@@ -95,7 +103,16 @@ contract Judgement is Proxied {
             abi.encodePacked(
                 "\x19\x01",
                 DOMAIN_SEPARATOR,
-                keccak256(abi.encode(BET_TYPEHASH, documentId, id, parentId, isValid ? "true" : "false", timestamp))
+                keccak256(
+                    abi.encode(
+                        BET_TYPEHASH,
+                        documentId,
+                        id,
+                        parentId,
+                        keccak256(bytes(isValid ? "true" : "false")), // string => keccak256
+                        timestamp
+                    )
+                )
             );
     }
 

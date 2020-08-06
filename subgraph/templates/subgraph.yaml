@@ -46,4 +46,6 @@ dataSources:
       eventHandlers:
         - event: JudgementCasted(indexed bytes32,bool)
           handler: handleJudgementCasted
+        - event: BetSubmitted(indexed bytes32,indexed address,indexed uint256)
+          handler: handleBetSubmitted
       file: ./src/mapping.ts
